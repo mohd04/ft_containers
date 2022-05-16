@@ -1,4 +1,4 @@
-#include <vector>
+// #include <vector>
 #include <iostream>
 #include <memory>
 #include "vector.hpp"
@@ -7,7 +7,10 @@ int main(void)
 {
 	std::allocator<int> myalloc;
 
-	ft::Vector <int> v;
+	int i = 2;
+	ft::vector <int> v(2);
+
+	v.print(i);
 
 	int* arr = myalloc.allocate(5);
 	myalloc.construct(arr, 100);
