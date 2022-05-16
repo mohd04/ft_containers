@@ -23,7 +23,9 @@ namespace ft
 			- difference_type
 			- size_type */
 	private:
-
+		allocator_type	_alloc;
+		pointer			_start;
+		pointer			_end;
 	public:
 		typedef T											value_type;
 		typedef Alloc										allocator_type;
