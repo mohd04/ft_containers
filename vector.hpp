@@ -22,10 +22,6 @@ namespace ft
 			- const_reverse_iterator
 			- difference_type
 			- size_type */
-	private:
-		allocator_type	_alloc;
-		pointer			_start;
-		pointer			_end;
 	public:
 		typedef T											value_type;
 		typedef Alloc										allocator_type;
@@ -35,20 +31,26 @@ namespace ft
 		typedef typename allocator_type::const_pointer		const_pointer;
 		typedef typename allocator_type::size_type			size_type;
 		// have to add iterators
+	private:
+		allocator_type	_alloc;
+		pointer			_start;
+		pointer			_end;
+		pointer			_lastElem;
 
 	public:
-		explicit vector(const allocator_type& alloc = allocator_type()) {};
+		explicit vector(const allocator_type& alloc = allocator_type()) : _alloc(alloc), _start(NULL), _end(NULL), _lastElem(0) {};
 		explicit vector(size_type n, const value_type& val = value_type(),
 						const allocator_type& alloc = allocator_type()) :
-						size_type(n),
-						value_type(val) {};
-		// vector(const vector& x) : (*this = x) {};å
+						_alloc(alloc),
+						_start(_alloc.allocate(n * 2)),
+						_end(_start),
+						_lastElem(_start + n)
+						{
+							_alloc.construct(_start, val);
+						};
+		// vector(const vector& x) {};
 		~vector() {}; // have to use free here
 		vector& operator=(vector& src) {};
-
-		template <typename T> void print(T& n) {
-			std::cout << n << std::endl;
-		}
 
 		// Iterators
 
