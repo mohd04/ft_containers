@@ -1,10 +1,15 @@
-#include <iostream>
-#include <vector>
+#include "dummy.hpp"
 
 int main()
 {
-    std::vector<int> g1(5, 10);
+	int array[] = {2, 23, 234, 42, 12};
 
-	auto i = g1.begin();
-	std::cout << *i << std::endl;
+	vectorRawIterator<int> a;
+	vectorRawIterator<int> b;
+
+	vectorRawIterator<int>::pointer ptr;
+	b = a;
+	++b;
+	for (ptr = 0; ptr < arra; ptr++)
+		std::cout << ptr << std::endl;
 }
