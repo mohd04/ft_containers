@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <memory>
-#include "dummy.hpp"
+#include "vec_iterator.hpp"
 
 namespace ft
 {
@@ -31,24 +31,28 @@ namespace ft
 		typedef typename allocator_type::pointer			pointer;
 		typedef typename allocator_type::const_pointer		const_pointer;
 		typedef typename allocator_type::size_type			size_type;
-		typedef vectorIterator<value_type>					iterator;
+		typedef ft::vectorIterator<value_type>				iterator;
 		// have to add iterators
 	private:
 		allocator_type	_alloc;
 		pointer			_start;
 		pointer			_end;
-		pointer			_lastElem;
+		size_type		_capacity;
 
 	public:
-		explicit vector(const allocator_type& alloc = allocator_type()) : _alloc(alloc), _start(NULL), _end(NULL), _lastElem(0) {};
+		explicit vector(const allocator_type& alloc = allocator_type()) : _alloc(alloc), _start(NULL), _end(NULL), _capacity(0) {};
 		explicit vector(size_type n, const value_type& val = value_type(),
 						const allocator_type& alloc = allocator_type()) :
 						_alloc(alloc),
 						_start(_alloc.allocate(n * 2)),
 						_end(_start),
-						_lastElem(_start + n)
+						_capacity(n)
 						{
-							_alloc.construct(_start, val);
+							for (int i = 0; i < _capacity; i++)
+							{
+								std::cout << i << std::endl;
+								_alloc.construct(&_start[i], val);
+							}
 						};
 		// vector(const vector& x) {};
 		~vector() {}; // have to use free here
@@ -59,7 +63,7 @@ namespace ft
 		// begin();
 		iterator	begin()
 		{
-			return (this->_start);
+			return (_start);
 		}
 		// end();
 		// rbegin();

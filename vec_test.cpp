@@ -6,11 +6,13 @@
 
 int main(void)
 {
-	ft::vector <int> v;
-	std::vector<int> s;
+	ft::vector <int> v(2, 5);
+	std::vector<int> s(2, 5);
 
-	auto i = s.begin();
+	std::vector<int>::iterator ptr;
+
+	ptr = s.begin();
 	std::cout << v.begin() << std::endl;
-	std::cout << *i << std::endl;
+	std::cout << *ptr << std::endl;
 	return (0);
 }

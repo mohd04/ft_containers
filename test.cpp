@@ -9,7 +9,6 @@ int main()
 
 	vectorRawIterator<int>::pointer ptr;
 	b = a;
-	++b;
-	for (ptr = 0; ptr < arra; ptr++)
+	for (ptr = a.begin(); ptr < ; ptr++)
 		std::cout << ptr << std::endl;
 }
