@@ -32,6 +32,7 @@ namespace ft
 		typedef typename allocator_type::const_pointer		const_pointer;
 		typedef typename allocator_type::size_type			size_type;
 		typedef ft::vectorIterator<value_type>				iterator;
+		typedef ft::vectorRevIterator<value_type>			reverse_iterator;
 		// have to add iterators
 	private:
 		allocator_type	_alloc;
@@ -44,15 +45,15 @@ namespace ft
 		explicit vector(size_type n, const value_type& val = value_type(),
 						const allocator_type& alloc = allocator_type()) :
 						_alloc(alloc),
-						_start(_alloc.allocate(n * 2)),
-						_end(_start),
-						_capacity(n)
+						_start(NULL),
+						_end(NULL),
+						_capacity(0)
 						{
+							_start = _alloc.allocate(n * 2);
+							_end = _start;
+							_capacity = n;
 							for (int i = 0; i < _capacity; i++)
-							{
-								std::cout << i << std::endl;
 								_alloc.construct(&_start[i], val);
-							}
 						};
 		// vector(const vector& x) {};
 		~vector() {}; // have to use free here
@@ -61,13 +62,22 @@ namespace ft
 		// Iterators
 
 		// begin();
-		iterator	begin()
+		iterator	begin(void)
 		{
-			return (_start);
+			return (iterator(this->_start));
 		}
 		// end();
-		// rbegin();
-		// rend();
+		iterator	end()
+		{
+			return (iterator(this->_end));
+		}
+		// rbegin(); have to do const
+		reverse_iterator	rbegin()
+		{
+			reutrn (reverse_iterator(this->_end));
+		}
+		// rend(); have to do const
+		reverse_iterator	rbe
 		// cbegin();
 		// cend();
 		// crbegin();

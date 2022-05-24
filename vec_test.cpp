@@ -11,8 +11,8 @@ int main(void)
 
 	std::vector<int>::iterator ptr;
 
-	ptr = s.begin();
-	std::cout << v.begin() << std::endl;
+	ptr = s.end();
+	std::cout << v.end() << std::endl;
 	std::cout << *ptr << std::endl;
 	return (0);
 }
