@@ -32,7 +32,7 @@ namespace ft
 		typedef typename allocator_type::const_pointer		const_pointer;
 		typedef typename allocator_type::size_type			size_type;
 		typedef ft::vectorIterator<value_type>				iterator;
-		typedef ft::vectorRevIterator<value_type>			reverse_iterator;
+		// typedef ft::vectorRevIterator<value_type>			reverse_iterator;
 		// have to add iterators
 	private:
 		allocator_type	_alloc;
@@ -71,13 +71,12 @@ namespace ft
 		{
 			return (iterator(this->_end));
 		}
-		// rbegin(); have to do const
-		reverse_iterator	rbegin()
-		{
-			reutrn (reverse_iterator(this->_end));
-		}
+		// rbegin(); have to do cons
+		// reverse_iterator	rbegin()
+		// {
+		// 	reutrn (reverse_iterator(this->_end));
+		// }
 		// rend(); have to do const
-		reverse_iterator	rbe
 		// cbegin();
 		// cend();
 		// crbegin();
@@ -86,9 +85,26 @@ namespace ft
 		// Capacity
 
 		// size();
+		size_t	size() const {
+			return (_capacity);
+		}
 		// max_size();
+		size_type	max_size() const {
+			return (allocator_type().max_size());
+		}
 		// resize();
+		void	resize(size_type n, value_type val = value_type()) {
+			_alloc.deallocate(_start ,_capacity);
+			_start = _alloc.allocate(n * 2);
+			_end = _start;
+			_capacity = n;
+			for (int i = 0; i < _capacity; i++)
+				_alloc.construct(&_start[i], val);
+		}
 		// capacity();
+		size_type	capacity() const {
+			return (_capacity);
+		}
 		// empty();
 		// reserve();
 		// shrink_to_fit();

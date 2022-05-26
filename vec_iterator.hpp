@@ -67,32 +67,32 @@ namespace ft
 	};
 // Reverse Iterator
 
-	template<typename vectorType>
-	class vectorRevIterator : public vectorIterator<vectorType>
-	{
-	public:
-		vectorRevIterator(vectorType* ptr = nullptr) : vectorRevIterator<vectorType>(ptr) {}
-		vectorRevIterator(const vectorIterator<vectorType>& rawIterator) { this->m_ptr = rawIterator.getPtr();}
-		vectorRevIterator(const vectorRevIterator<vectorType>& rawRevIterator) { *this = rawRevIterator;}
-		~vectorRevIterator() {}
+	// template<typename vectorType>
+	// class vectorRevIterator : public vectorIterator<vectorType>
+	// {
+	// public:
+	// 	vectorRevIterator(vectorType* ptr = nullptr) : vectorRevIterator<vectorType>(ptr) {}
+	// 	vectorRevIterator(const vectorIterator<vectorType>& rawIterator) { this->m_ptr = rawIterator.getPtr();}
+	// 	vectorRevIterator(const vectorRevIterator<vectorType>& rawRevIterator) { *this = rawRevIterator;}
+	// 	~vectorRevIterator() {}
 
-		vectorRevIterator<vectorType>&		operator=(const vectorRevIterator<vectorType>& rawRevIterator) { m_ptr = ptr; return (*this); }
-		vectorRevIterator<vectorType>&		operator=(const vectorIterator<vectorType>& rawIterator) {this->m_ptr = rawIterator.getPtr(); return (*this); }
-		vectorRevIterator<vectorType>&		operator=(vectorType* ptr) { this->setPtr(ptr); return (*this); }
+	// 	vectorRevIterator<vectorType>&		operator=(const vectorRevIterator<vectorType>& rawRevIterator) { m_ptr = ptr; return (*this); }
+	// 	vectorRevIterator<vectorType>&		operator=(const vectorIterator<vectorType>& rawIterator) {this->m_ptr = rawIterator.getPtr(); return (*this); }
+	// 	vectorRevIterator<vectorType>&		operator=(vectorType* ptr) { this->setPtr(ptr); return (*this); }
 
-		vectorRevIterator<vectorType>&		operator+=(const ptrdiff_t& movement) {this->m_ptr -= movement; return (*this); }
-		vectorRevIterator<vectorType>&		operator-=(const ptrdiff_t& movement) {this->m_ptr += movement; return (*this); }
-		vectorRevIterator<vectorType>&		operator++(){--this->m_ptr; reutrn (*this); }
-		vectorRevIterator<vectorType>&		operator--(){++this->m_ptr; reutrn (*this); }
-		vectorRevIterator<vectorType>&		operator++(int) {vectorRevIterator	temp(*this); --m_ptr; return (temp); }
-		vectorRevIterator<vectorType>&		operator--(int) {vectorRevIterator	temp(*this); ++m_ptr; return (temp); }
-		vectorRevIterator<vectorType>&		operator+(const intt& movement) { vectorType* oldPtr = m_ptr; m_ptr-=movement; vectorRevIterator tmp(*this); m_ptr = oldPtr; return (tmp); }
-		vectorRevIterator<vectorType>&		operator-(const intt& movement) { vectorType* oldPtr = m_ptr; m_ptr+=movement; vectorRevIterator tmp(*this); m_ptr = oldPtr; return (tmp); }
+	// 	vectorRevIterator<vectorType>&		operator+=(const ptrdiff_t& movement) {this->m_ptr -= movement; return (*this); }
+	// 	vectorRevIterator<vectorType>&		operator-=(const ptrdiff_t& movement) {this->m_ptr += movement; return (*this); }
+	// 	vectorRevIterator<vectorType>&		operator++(){--this->m_ptr; reutrn (*this); }
+	// 	vectorRevIterator<vectorType>&		operator--(){++this->m_ptr; reutrn (*this); }
+	// 	vectorRevIterator<vectorType>&		operator++(int) {vectorRevIterator	temp(*this); --m_ptr; return (temp); }
+	// 	vectorRevIterator<vectorType>&		operator--(int) {vectorRevIterator	temp(*this); ++m_ptr; return (temp); }
+	// 	vectorRevIterator<vectorType>&		operator+(const intt& movement) { vectorType* oldPtr = m_ptr; m_ptr-=movement; vectorRevIterator tmp(*this); m_ptr = oldPtr; return (tmp); }
+	// 	vectorRevIterator<vectorType>&		operator-(const intt& movement) { vectorType* oldPtr = m_ptr; m_ptr+=movement; vectorRevIterator tmp(*this); m_ptr = oldPtr; return (tmp); }
 
-		ptrdiff_t							operator-(const vectorRevIterator<vectorType>& rawRevIterator) { return (std::distance(this->getPtr(), rawRevIterator.getPtr())); }
+	// 	ptrdiff_t							operator-(const vectorRevIterator<vectorType>& rawRevIterator) { return (std::distance(this->getPtr(), rawRevIterator.getPtr())); }
 
-		// vectorIterator<vectorType>			base() { vectorIterator<vectorType> forward}
-	};
+	// 	// vectorIterator<vectorType>			base() { vectorIterator<vectorType> forward}
+	// };
 }
 
 
