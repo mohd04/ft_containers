@@ -12,6 +12,9 @@ int main(void)
     ft::vector<int>::iterator mIter = mine.begin();
     std::vector<int>::iterator oIter = orig.begin();
 
+    mine.reserve(12);
+    orig.reserve(12);
+
     std::cout << "mine --- capacity: " << mine.capacity() << std::endl;
     std::cout << "orig --- capacity: " << orig.capacity() << std::endl;
 

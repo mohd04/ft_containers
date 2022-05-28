@@ -67,9 +67,9 @@ namespace ft
             return (iterator(this->_begin));
         }
         // const begin()
-        const_iterator  begin() const {
-            return (const_iterator(this->begin));
-        }
+        // const_iterator  begin() const {
+        //     return (const_iterator(this->begin));
+        // }
         // end();
         iterator    end() {
             return (iterator(this->_end));
@@ -125,10 +125,10 @@ namespace ft
         }
         // reserve();
 
-        void    reserve(size_type n) {
+        void    reserve(size_t n) {
             size_t __cap = _size;
             if (__cap < n) {
-
+                replace(n);
             }
         }
         // shrink_to_fit();
@@ -156,15 +156,20 @@ namespace ft
         // Allocator
 
         // get_allocator();
-
-        void    replace(size_type len) {
+    private:
+        void    replace(size_t len) {
             pointer tmp = _begin;
-
-            for (iterator i = begin(); i <= end(); i++)
-
+            pointer val = _begin;
+            iterator i = begin();
+            _begin = _alloc.allocate(len * 2);
+            _size = len;
+            _end = _begin + _size;
+            for (int i = 0; i < _size; i++, val++)
+                _alloc.construct(&_begin[i], *val);
+            remove(tmp);
         }
 
-        void    delete(pointer _tbd) {
+        void    remove(pointer _tbd) {
             size_type  _len = _size * 2;
 
             for (size_type i = 0; i < _len; i++)
@@ -172,6 +177,5 @@ namespace ft
         }
     };
 }
-
 
 #endif
