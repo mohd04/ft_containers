@@ -1,4 +1,3 @@
-// #include <vector>
 #include <iostream>
 #include <memory>
 #include "vector.hpp"
@@ -12,11 +11,23 @@ int main(void)
     ft::vector<int>::iterator mIter = mine.begin();
     std::vector<int>::iterator oIter = orig.begin();
 
-    mine.reserve(12);
-    orig.reserve(12);
+    std::cout << "mine --- size: " << mine.size() << std::endl;
+    std::cout << "orig --- size: " << orig.size() << std::endl;
+
+    std::cout << "mine --- begin: " << *mIter << std::endl;
+    std::cout << "orig --- begin: " << *oIter << std::endl;
 
     std::cout << "mine --- capacity: " << mine.capacity() << std::endl;
     std::cout << "orig --- capacity: " << orig.capacity() << std::endl;
+
+    mine.reserve(12);
+    orig.reserve(12);
+
+    std::cout << "mine --- capacity after reserve: " << mine.capacity() << std::endl;
+    std::cout << "orig --- capacity after reserve: " << orig.capacity() << std::endl;
+
+    std::cout << "mine --- size: " << mine.size() << std::endl;
+    std::cout << "orig --- size: " << orig.size() << std::endl;
 
     std::cout << "mine --- not empty: " << mine.empty() << std::endl;
     std::cout << "orig --- not empty: " << orig.empty() << std::endl;
