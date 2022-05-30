@@ -5,47 +5,40 @@
 
 int main(void)
 {
-    ft::vector <int> mine(10, 5);
-	std::vector<int> orig(10, 5);
+    ft::vector <int> mine(2, 5);
+	std::vector<int> orig(2, 5);
 
     ft::vector<int>::iterator mIter = mine.begin();
     std::vector<int>::iterator oIter = orig.begin();
 
-    std::cout << "mine --- size: " << mine.size() << std::endl;
-    std::cout << "orig --- size: " << orig.size() << std::endl;
-
     std::cout << "mine --- begin: " << *mIter << std::endl;
     std::cout << "orig --- begin: " << *oIter << std::endl;
+
+    mIter = mine.end();
+    oIter = orig.end();
+
+    for (ft::vector<int>::iterator i = mine.begin(); i < mine.end(); i++)
+        std::cout << "here " << mine[i] << std::endl;
+
+    std::cout << "mine --- end: " << *mIter << std::endl;
+    std::cout << "orig --- end: " << *oIter << std::endl;
+
+    std::cout << "mine --- size: " << mine.size() << std::endl;
+    std::cout << "orig --- size: " << orig.size() << std::endl;
 
     std::cout << "mine --- capacity: " << mine.capacity() << std::endl;
     std::cout << "orig --- capacity: " << orig.capacity() << std::endl;
 
-    mine.reserve(12);
-    orig.reserve(12);
+    mine.reserve(5);
+    orig.reserve(5);
 
-    std::cout << "mine --- capacity after reserve: " << mine.capacity() << std::endl;
-    std::cout << "orig --- capacity after reserve: " << orig.capacity() << std::endl;
+    std::cout << "\n--------------- after reserve-------------------" << std::endl;
 
-    std::cout << "mine --- size: " << mine.size() << std::endl;
-    std::cout << "orig --- size: " << orig.size() << std::endl;
-
-    std::cout << "mine --- not empty: " << mine.empty() << std::endl;
-    std::cout << "orig --- not empty: " << orig.empty() << std::endl;
-
-    ft::vector <int> test_mine;
-	std::vector<int> test_orig;
-
-    std::cout << "mine --- empty: " << test_mine.empty() << std::endl;
-    std::cout << "orig --- empty: " << test_orig.empty() << std::endl;
+    mIter = mine.begin();
+    oIter = orig.begin();
 
     std::cout << "mine --- begin: " << *mIter << std::endl;
     std::cout << "orig --- begin: " << *oIter << std::endl;
-
-    // ft::vector<int>::const_iterator ct_mIter = mine.begin();
-    // std::vector<int>::const_iterator ct_oIter = orig.begin();
-
-    // std::cout << "mine --- begin: " << *mIter << std::endl;
-    // std::cout << "orig --- begin: " << *ct_oIter << std::endl;
 
     mIter = mine.end();
     oIter = orig.end();
@@ -53,20 +46,11 @@ int main(void)
     std::cout << "mine --- end: " << *mIter << std::endl;
     std::cout << "orig --- end: " << *oIter << std::endl;
 
-    size_t oPtr = orig.size();
-    size_t mPtr = mine.size();
-
     std::cout << "mine --- size: " << mine.size() << std::endl;
     std::cout << "orig --- size: " << orig.size() << std::endl;
 
-    std::cout << "mine --- max size: " << mine.max_size() << std::endl;
-    std::cout << "orig --- max size: " << orig.max_size() << std::endl;
-
-    // mine.resize(5, 2);
-    // orig.resize(6, 2);
-
-    // std::cout << "mine --- resize: " << mine.size() << std::endl;
-    // std::cout << "orig --- resize: " << orig.size() << std::endl;
+    std::cout << "mine --- capacity: " << mine.capacity() << std::endl;
+    std::cout << "orig --- capacity: " << orig.capacity() << std::endl;
 
     return (0);
 }

@@ -22,6 +22,7 @@ namespace ft
         typedef vectorType*                                        pointer;
         typedef vectorType&                                        reference;
 
+        vectorIterator() {this->m_ptr = NULL;}
         vectorIterator(vectorType* ptr = nullptr) { m_ptr = ptr; }
         vectorIterator(const vectorIterator<vectorType>& rawIterator) {*this = rawIterator;}
         ~vectorIterator() {}

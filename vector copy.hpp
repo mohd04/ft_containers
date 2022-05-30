@@ -39,10 +39,10 @@ namespace ft
         allocator_type      _alloc;
         pointer             _begin;
         pointer             _end;
-        pointer             _size;
+        pointer             _capacity;
 
     public:
-        explicit vector(const allocator_type& alloc = allocator_type()) : _alloc(alloc), _begin(NULL), _end(NULL), _size(0) {};
+        explicit vector(const allocator_type& alloc = allocator_type()) : _alloc(alloc), _begin(NULL), _end(NULL), _capacity(0) {};
         explicit vector(size_type _n, const value_type& _val = value_type(),
                         const allocator_type& alloc = allocator_type()) :
                         _alloc(alloc)
@@ -86,22 +86,22 @@ namespace ft
         size_type    size() const {
             return size_type(_end - _begin);
         }
-        // max_size();
-        size_type    max_size() const {
-            return (allocator_type().max_size());
+        // max_capacity();
+        size_type    max_capacity() const {
+            return (allocator_type().max_capacity());
         }
         // resize();
         // void    resize(size_type n, value_type val = value_type()) {
-        //     size_type    _c_size = size();
-        //     if (_c_size < n)
+        //     size_type    _c_capacity = size();
+        //     if (_c_capacity < n)
         //     {
         //         iterator    _iter;
         //         size_type    _capa = capacity();
-        //         size_type    _diff = n - _c_size;
+        //         size_type    _diff = n - _c_capacity;
         //         if (_diff <= _capa && _capa <= _capa - _diff)
         //         {
         //             _iter = end();
-        //             _size += _diff;
+        //             _capacity += _diff;
         //         }
         //         else
         //         {
@@ -112,7 +112,7 @@ namespace ft
         // }
         // capacity();
         size_type    capacity() const {
-            return size_type(_size - _begin);
+            return size_type(_capacity - _begin);
         }
         // empty();
         bool    empty() const {
@@ -121,15 +121,15 @@ namespace ft
         // reserve();
 
         void    reserve(size_t _n) {
-            // if (n > max_size)
+            // if (n > max_capacity)
                 // have to throw error
             // if (capacity() < n)
             //     _M_replace(n);
-            const size_type _old_size = size();
+            const size_type _old_capacity = size();
             pointer  _tmp = _M_allocate(_n);
             _M_deallocate();
             this->_begin = _tmp;
-            this->_end = _tmp + _old_size;
+            this->_end = _tmp + _old_capacity;
         }
         // shrink_to_fit();
 
@@ -166,20 +166,20 @@ namespace ft
         //deallocate
         void _M_deallocate() {
             const size_t _n = _end - _begin;
-            _alloc.deallocate(_begin, _size - _begin);
+            _alloc.deallocate(_begin, _capacity - _begin);
         }
         //reallocate
         void    _M_replace(size_t len) {
             pointer tmp = _begin;
             iterator i = begin();
             _M_initialize(len);
-            for (int i = 0; i < _size; i++)
+            for (int i = 0; i < _capacity; i++)
                 this->_alloc.construct(_begin + i, 0);
             _M_delete(tmp);
         }
 
         void    _M_delete(pointer _tbd) {
-            size_type  _len = _size * 2;
+            size_type  _len = _capacity * 2;
 
             for (size_type i = 0; i < _len; i++)
                 _alloc.destroy(&_tbd[i]);
@@ -187,7 +187,7 @@ namespace ft
 
         void _M_initialize(size_type _n) {
             this->_begin = this->_M_allocate(_n);
-            this->_size = _begin + _n;
+            this->_capacity = _begin + _n;
             this->_end = this->_begin;
         }
 
