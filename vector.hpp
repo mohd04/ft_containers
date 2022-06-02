@@ -25,11 +25,11 @@ namespace ft
             - difference_type
             - size_type */
     public:
-        typedef T                                            value_type;
-        typedef Alloc                                        allocator_type;
+        typedef T                                             value_type;
+        typedef Alloc                                         allocator_type;
         typedef typename allocator_type::reference            reference;
-        typedef typename allocator_type::const_reference    const_reference;
-        typedef typename allocator_type::pointer            pointer;
+        typedef typename allocator_type::const_reference      const_reference;
+        typedef typename allocator_type::pointer              pointer;
         typedef typename allocator_type::const_pointer        const_pointer;
         typedef typename allocator_type::size_type            size_type;
         typedef ft::vectorIterator<value_type>                iterator;
@@ -78,6 +78,8 @@ namespace ft
         // rbegin(); have to do cons
         // rend(); have to do const
         // cbegin();
+        // const_iterator  cbegin() {
+        // }
         // cend();
         // crbegin();
         // crend();
@@ -129,6 +131,9 @@ namespace ft
             }
         }
         // shrink_to_fit();
+        // void    shrink_to_fit() {
+        //     if (capacity() - size() < int())
+        // }
 
         // Element access
 
@@ -137,14 +142,35 @@ namespace ft
             return *(_begin + _n);
         }
         // at();
+        reference   at(size_type _n) {
+            _range_check(_n);
+            return (*this)[_n];
+        }
         // front();
+        reference   front() {
+            return *begin();
+        }
         // back();
+        reference   back() {
+            return *(end() - 1);
+        }
         // data();
 
         // Modifiers
 
         // assign();
+        // void    assign(size_type _n, bool& _x) {
+
+        // }
         // push_back();
+        void    push_back(const value_type& _val) {
+            if (this->_end != this->_capacity) {
+                _alloc.construct(_end + 1, _val);
+                ++this->_end;
+            }
+            // else
+
+        }
         // pop_back();
         // insert();
         // erase();
@@ -157,6 +183,12 @@ namespace ft
 
         // get_allocator();
     private:
+
+        void    _range_check(size_type _n) const {
+            if (_n >= this->size())
+                throw   std::out_of_range("Error: out of size range.");
+        }
+
         void    replace(size_type len) {
             pointer tmp = _begin;
             pointer val = _begin;

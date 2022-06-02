@@ -65,6 +65,7 @@ namespace ft
 
         protected:
             value_type*        m_ptr;
+            int                index;
     };
 // Reverse Iterator
 
