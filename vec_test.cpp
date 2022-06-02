@@ -5,8 +5,8 @@
 
 int main(void)
 {
-    ft::vector <int> mine(2, 5);
-	std::vector<int> orig(2, 5);
+    ft::vector <int> mine(5, 5);
+	std::vector<int> orig(5, 5);
 
     ft::vector<int>::iterator mIter = mine.begin();
     std::vector<int>::iterator oIter = orig.begin();
@@ -17,8 +17,20 @@ int main(void)
     mIter = mine.end();
     oIter = orig.end();
 
+    std::cout << "mine --- end: " << *mIter << std::endl;
+    std::cout << "orig --- end: " << *oIter << std::endl;
+
+    std::cout << "mine --- size: " << mine.size() << std::endl;
+    std::cout << "orig --- size: " << orig.size() << std::endl;
+
     for (ft::vector<int>::iterator i = mine.begin(); i < mine.end(); i++)
-        std::cout << "here " << mine[i] << std::endl;
+    {
+        std::cout << "okay" << std::endl;
+        std::cout << "here " << *i << std::endl;
+    }
+
+    for (std::vector<int>::iterator i = orig.begin(); i < orig.end(); i++)
+        std::cout << "orig " << *i << std::endl;
 
     std::cout << "mine --- end: " << *mIter << std::endl;
     std::cout << "orig --- end: " << *oIter << std::endl;

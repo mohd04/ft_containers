@@ -47,10 +47,10 @@ namespace ft
 
         vectorIterator<vectorType>&        operator+=(const ptrdiff_t& movement) { m_ptr += movement; return (*this); }
         vectorIterator<vectorType>&        operator-=(const ptrdiff_t& movement) { m_ptr -= movement; return (*this); }
-        vectorIterator<vectorType>&        operator++() { ++m_ptr; return (*this); }
-        vectorIterator<vectorType>&        operator--() { --m_ptr; return (*this); }
-        vectorIterator<vectorType>&        operator++(int) {vectorIterator    temp(*this); ++m_ptr; return (temp); }
-        vectorIterator<vectorType>&        operator--(int) {vectorIterator    temp(*this); --m_ptr; return (temp); }
+        vectorIterator<vectorType>        operator++() { ++m_ptr; return (*this); }
+        vectorIterator<vectorType>        operator--() { --m_ptr; return (*this); }
+        vectorIterator<vectorType>         operator++(int) {vectorIterator    temp(*this); ++m_ptr; return (temp); }
+        vectorIterator<vectorType>        operator--(int) {vectorIterator    temp(*this); --m_ptr; return (temp); }
         vectorIterator<vectorType>&        operator+(const ptrdiff_t& movement) { vectorType* oldPtr = m_ptr; m_ptr+=movement; vectorIterator tmp(*this); m_ptr = oldPtr; return (tmp); }
         vectorIterator<vectorType>&        operator-(const ptrdiff_t& movement) { vectorType* oldPtr = m_ptr; m_ptr-=movement; vectorIterator tmp(*this); m_ptr = oldPtr; return (tmp); }
 
@@ -64,7 +64,7 @@ namespace ft
         const vectorType*                getConstPtr() const { return (m_ptr); }
 
         protected:
-            value_type*        m_ptr;
+            pointer            m_ptr;
             int                index;
     };
 // Reverse Iterator
