@@ -80,27 +80,24 @@ namespace ft
         // cbegin();
         // const_iterator  cbegin() {
         // }
-        // cend();
-        // crbegin();
-        // crend();
 
         // Capacity
 
         // size();
         size_t    size() const {
-            return (_end - _begin);
+            return size_type(_end - _begin);
         }
         // max_capacity();
         size_type    max_capacity() const {
             return (allocator_type().max_size());
         }
-        // resize();
-        // void    resize(size_type n, value_type val = value_type()) {
-        //     if (n < size())
-        //         erase(_begin + n, _end);
-        //     else if (n > size())
-        //         insert();
-        // }
+        resize();
+        void    resize(size_type n, value_type val = value_type()) {
+            if (n < size())
+                erase(_begin + n, _end);
+            else if (n > size())
+                insert();
+        }
         // capacity();
         size_type    capacity() const {
             return size_type(_capacity - _begin);
@@ -172,16 +169,64 @@ namespace ft
 
         }
         // pop_back();
+
+        void pop_back() {
+            _alloc.destroy(--_end);
+        }
         // insert();
         // erase();
+        iterator erase(iterator position) {
+            _alloc.destory(&(*position));
+
+            size_type   len = _end - &(*position) - 1;
+            pointer     tmp = &(*position);
+            while (len--) {
+                _alloc.construct(tmp, *(tmp + 1));
+                _alloc.destroy(tmp++);
+            }
+            --_end;
+            return (position);
+        }
+
+        // iterator erase(iterator first, iterator last) {
+        //     pointer tmp = &(*first);
+        //     while (tmp != &(*last))
+        //         _alloc.destroy(tmp++);
+        //     size_type len = _end - &(*last);
+        //     size_type range = ft::distance
+        // }
         // swap();
+
+        void swap(vector& x) {
+            allocator_type tmp = x._alloc;
+            pointer tmp_begin = x._begin;
+            pointer tmp_end = x._end;
+            pointer tmp_capacity = x._capacity;
+
+            x._alloc = _alloc;
+            x._begin = _begin;
+            x._end = _end;
+            x._capacity = _capacity;
+
+            _alloc = tmp;
+            _begin = tmp_begin;
+            _end = tmp_end;
+            _capacity = tmp_capacity;
+        }
         // clear();
-        // emplace();
-        // emplace_back();
+
+        void clear() {
+            while (_begin != _end)
+                _alloc.destroy(--_end);
+        }
 
         // Allocator
 
         // get_allocator();
+
+        allocator_type get_allocator() const {
+            return (_alloc);
+        }
     private:
 
         void    _range_check(size_type _n) const {
