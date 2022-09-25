@@ -6,7 +6,7 @@
 int main(void)
 {
     ft::vector <int> mine(5, 5);
-	std::vector<int> orig(5, 5);
+	std::vector<int> orig(10, 5);
 
     ft::vector<int>::iterator mIter = mine.begin();
     std::vector<int>::iterator oIter = orig.begin();
@@ -14,55 +14,44 @@ int main(void)
     std::cout << "mine --- begin: " << *mIter << std::endl;
     std::cout << "orig --- begin: " << *oIter << std::endl;
 
-    mIter = mine.end();
-    oIter = orig.end();
+    ft::vector<int>::size_type Msize = mine.size();
+    std::vector<int>::size_type Osize = orig.size();
 
-    std::cout << "mine --- end: " << *mIter << std::endl;
-    std::cout << "orig --- end: " << *oIter << std::endl;
+    std::cout << "mine -- size: " << Msize << std::endl;
+    std::cout << "orig -- size: " << Osize << std::endl;
 
-    std::cout << "mine --- size: " << mine.size() << std::endl;
-    std::cout << "orig --- size: " << orig.size() << std::endl;
+    Msize = mine.max_capacity();
+    Osize = orig.max_size();
 
-    for (ft::vector<int>::iterator i = mine.begin(); i < mine.end(); i++)
-    {
-        std::cout << "okay" << std::endl;
-        std::cout << "here " << *i << std::endl;
-    }
+    std::cout << "mine -- max size: " << Msize << std::endl;
+    std::cout << "orig -- max size: " << Osize << std::endl;
 
-    for (std::vector<int>::iterator i = orig.begin(); i < orig.end(); i++)
-        std::cout << "orig " << *i << std::endl;
+    Msize = mine.capacity();
+    Osize = orig.capacity();
 
-    std::cout << "mine --- end: " << *mIter << std::endl;
-    std::cout << "orig --- end: " << *oIter << std::endl;
+    std::cout << "mine -- capacity: " << Msize << std::endl;
+    std::cout << "orig -- capacity: " << Osize << std::endl;
 
-    std::cout << "mine --- size: " << mine.size() << std::endl;
-    std::cout << "orig --- size: " << orig.size() << std::endl;
+    bool Mempty = mine.empty();
+    bool Oempty = orig.empty();
 
-    std::cout << "mine --- capacity: " << mine.capacity() << std::endl;
-    std::cout << "orig --- capacity: " << orig.capacity() << std::endl;
+    std::cout << "mine -- empty: " << Mempty << std::endl;
+    std::cout << "orig -- empty: " << Oempty << std::endl;
 
-    mine.reserve(5);
-    orig.reserve(5);
+    mine.resize(10);
+    orig.resize(10);
 
-    std::cout << "\n--------------- after reserve-------------------" << std::endl;
+    Msize = mine.size();
+    Osize = orig.size();
 
-    mIter = mine.begin();
-    oIter = orig.begin();
+    std::cout << "mine -- size after reserve: " << Msize << std::endl;
+    std::cout << "orig -- size after reserve: " << Osize << std::endl;
 
-    std::cout << "mine --- begin: " << *mIter << std::endl;
-    std::cout << "orig --- begin: " << *oIter << std::endl;
+    Msize = mine.capacity();
+    Osize = orig.capacity();
 
-    mIter = mine.end();
-    oIter = orig.end();
-
-    std::cout << "mine --- end: " << *mIter << std::endl;
-    std::cout << "orig --- end: " << *oIter << std::endl;
-
-    std::cout << "mine --- size: " << mine.size() << std::endl;
-    std::cout << "orig --- size: " << orig.size() << std::endl;
-
-    std::cout << "mine --- capacity: " << mine.capacity() << std::endl;
-    std::cout << "orig --- capacity: " << orig.capacity() << std::endl;
+    std::cout << "mine -- capacity after reserve: " << Msize << std::endl;
+    std::cout << "orig -- capacity after reserve: " << Osize << std::endl;
 
     return (0);
 }
