@@ -5,6 +5,7 @@
 #include <memory>
 #include <stdexcept>
 #include "vec_iterator.hpp"
+#include "reverse_iterator.hpp"
 
 namespace ft
 {
@@ -12,7 +13,6 @@ namespace ft
     class vector
     {
         /* member types
-            - reverse_iterator
             - const_reverse_iterator
             - difference_type*/
     public:
@@ -25,7 +25,10 @@ namespace ft
         typedef typename allocator_type::size_type            size_type;
         typedef ft::vectorIterator<value_type>                iterator;
         typedef ft::vectorIterator<const value_type>          const_iterator;
-        // typedef ft::vectorRevIterator<iterator>            reverse_iterator;
+        typedef ft::reverse_iterator<iterator>                reverse_iterator;
+        typedef ft::reverse_iterator<const_iterator>          const_reverse_iterator;
+        typedef ptrdiff_t                                     difference_type;
+
     private:
         allocator_type      _alloc;
         pointer             _begin;
@@ -126,7 +129,7 @@ namespace ft
         // Modifiers
 
         // assign();
-        // void    assign(size_type _n, bool& _x) {
+        // void    assign(size_type n, const T& val) {
 
         // }
 
@@ -143,7 +146,6 @@ namespace ft
             _alloc.destroy( _begin + _end);
             _end--;
         }
-        // insert();
 
         iterator    insert( iterator pos, const value_type & val) {
             // if (_end >= _capacity) {
@@ -164,7 +166,7 @@ namespace ft
             for (; n != 0; n--, i--)
                 _begin[i] = pos;
         }
-        // erase();
+
         iterator erase(iterator position) {
             _alloc.destory(&(*position));
 
@@ -178,13 +180,22 @@ namespace ft
             return (position);
         }
 
-        // iterator erase(iterator first, iterator last) {
-        //     pointer tmp = &(*first);
-        //     while (tmp != &(*last))
-        //         _alloc.destroy(tmp++);
-        //     size_type len = _end - &(*last);
-        //     size_type range =
-        // }
+        iterator erase(iterator first, iterator last) {
+            size_type len = 0;
+            pointer tmp = &(*first);
+            while (tmp != &(*last)) {
+                len++;
+                _alloc.destroy(tmp++);
+            }
+            size_type n = _end - &(*last);
+            tmp = &(*first);
+            while (n--) {
+                _alloc.construct(tmp, *last++);
+                _alloc.destroy(tmp++);
+            }
+            _end -= len;
+            return (first);
+        }
 
         void swap(vector& x) {
             allocator_type tmp = x._alloc;
@@ -202,6 +213,7 @@ namespace ft
             _end = tmp_end;
             _capacity = tmp_capacity;
         }
+
         void clear() {
             while (_begin != _end)
                 _alloc.destroy(--_end);
@@ -265,23 +277,6 @@ namespace ft
             // }
             return (position);
         }
-
-        // iterator erase(iterator first, iterator last) {
-        //     size_type len = 0;
-        //     pointer tmp = &(*first);
-        //     while (tmp != &(*last)) {
-        //         len++;
-        //         _alloc.destroy(tmp++);
-        //     }
-        //     size_type n = _end - &(*last);
-        //     tmp = &(*first);
-        //     while (n--) {
-        //         _alloc.construct(tmp, *last++);
-        //         _alloc.destroy(tmp++);
-        //     }
-        //     _end -= len;
-        //     return (first);
-        // }
     };
 }
 
