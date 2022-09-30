@@ -5,6 +5,7 @@
 #include <memory>
 #include <iterator>
 #include <cstddef>
+#include "iterator_traits.hpp"
 
 namespace ft
 {

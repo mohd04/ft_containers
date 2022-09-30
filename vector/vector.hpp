@@ -4,6 +4,8 @@
 #include <iostream>
 #include <memory>
 #include <stdexcept>
+#include <iterator>
+#include <cstddef>
 #include "vec_iterator.hpp"
 #include "reverse_iterator.hpp"
 
