@@ -1,7 +1,6 @@
-#include "avlTree.hpp"
+#include "../util.hpp"
 #include <map>
 
 int main()
 {
-  AVL <int, int> tree;
 }
