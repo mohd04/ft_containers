@@ -9,7 +9,7 @@ namespace ft {
 
     private:
       Node*             _ptr;
-      tree cosnt        *_tree;
+      tree              const *_tree;
       Compare           _comp;
 
     public:
