@@ -18,6 +18,7 @@ class AVL {
   public:
     typedef Key                                                             key_type;
     typedef T                                                               value_type;
+    typedef Compare                                                         key_compare;
     typedef ft::Node<const T>                                               const_node;
     typedef ft::Node<T>                                                     node;
     typedef Alloc                                                           allocator_type;
@@ -28,15 +29,15 @@ class AVL {
 
   private:
     ft::Node<T>*    _root;
-    size_t          _size;
+    int             _size;
     Compare         _compare;
     allocator_type  _allocator;
     node_allocator  _node_allocator;
 
   public:
     AVL(const key_compare& comp = key_compare(),
-              const allocator_type& alloc = allocator_type()) : _size(0),
-                                                                _root(NULL),
+              const allocator_type& alloc = allocator_type()) : _root(NULL),
+                                                                _size(0),
                                                                 _compare(comp),
                                                                 _allocator(alloc) {
     }
@@ -51,27 +52,31 @@ class AVL {
         // clear();
     }
 
-    bool  AVL_insert(AVL* tree, value_type data) {
-      Node<T>*   new_ptr;
-      bool    for_taller;
+    bool  AVL_insert(T obj) {
+      ft::Node<T>*  node = _node_allocator.allocate(1);
+      _node_allocator.construct(node);
+      node->data = _allocator.allocate(1);
+      _allocator.construct(node->data, obj);
+      // Node<T>   new_ptr;
+      // bool    for_taller;
 
-      new_ptr = _node_allocator().allocate(1);
-      new_ptr->bal = EH;
-      new_ptr->right = NULL;
-      new_ptr->left = NULL;
-      new_ptr->data = data;
+      // new_ptr = _node_allocator().allocate(1);
+      // new_ptr.bal = EH;
+      // new_ptr.right = NULL;
+      // new_ptr.left = NULL;
+      // new_ptr.bal = data;
 
-      tree->_root = _insert(data, new_ptr, for_taller);
-      (tree->_count)++;
+      // tree._root = _insert(new_ptr, data, for_taller);
+      // (tree._size)++;
       return true;
     }
 
-    bool  AVL_Delete(AVL* tree, key_type key) {
+    bool  AVL_Delete(AVL &tree, key_type key) {
       bool    shorter;
       bool    success;
       Node<T>*   new_root;
 
-      new_root = _delete(tree->_root, data, shorter, success);
+      new_root = _delete(tree->_root, key, shorter, success);
 
       if (success) {
         tree->_root = new_root;
@@ -81,26 +86,26 @@ class AVL {
       return false;
     }
 
-    void*   AVL_Retrieve(AVL* tree, key_type key) {
+    void*   AVL_Retrieve(AVL &tree, key_type key) {
       if (tree->root)
         return _retrieve(tree->_root, key);
       return NULL;
     }
 
-    void    AVL_Traverse(AVL* tree, void (*process)(value_type data)) {
+    void    AVL_Traverse(AVL &tree, void (*process)(value_type data)) {
       if (tree->_root)
         _traverse(tree->_root, process);
     }
 
-    bool  AVL_Empty(AVL* tree) {
+    bool  AVL_Empty(AVL &tree) {
       return (tree->_count == 0);
     }
 
-    int   AVL_Count(AVL* tree) {
+    int   AVL_Count(AVL &tree) {
       return tree->_count;
     }
 
-    AVL*  AVL_Destroy(AVL* tree) {
+    AVL*  AVL_Destroy(AVL &tree) {
       if (tree->_root)
         _destroy(tree->_root);
       tree->_count = 0;
@@ -108,9 +113,7 @@ class AVL {
       return NULL;
     }
 
-    private:
-
-    Node<T>*  _insert(Node<T>* root, const value_type &data, bool &taller) {
+    Node<T>*  _insert(Node<T> &root, const value_type &data, bool &taller) {
         if (!root) {
           AVL *new_node = _node_allocator.allocate(1);
           _node_allocator.construct(new_node, data);
@@ -165,7 +168,7 @@ class AVL {
         return root;
       }
 
-      Node<T>*   insLeftBal(Node<T>* root, bool &taller) {
+      Node<T>*   insLeftBal(Node<T> &root, bool &taller) {
         Node<T>* right_tree;
         Node<T>* left_tree;
 
@@ -210,7 +213,7 @@ class AVL {
         return root;
       }
 
-      Node<T>*   rotateLeft(Node<T>* root) {
+      Node<T>*   rotateLeft(Node<T> &root) {
         Node<T>*   temp_ptr;
 
         temp_ptr = root->right;
@@ -220,7 +223,7 @@ class AVL {
         return temp_ptr;
       }
 
-      Node<T>*   rotateRight(Node<T>* root) {
+      Node<T>*   rotateRight(Node<T> &root) {
         Node<T>*   temp_ptr;
 
         temp_ptr = root->left;
@@ -230,7 +233,7 @@ class AVL {
         return temp_ptr;
       }
 
-      Node<T>*   _delete(Node<T>* root, key_type key, bool & shorter, bool & success) {
+      Node<T>*   _delete(Node<T> &root, key_type key, bool & shorter, bool & success) {
         Node<T>*   dlt_ptr;
         Node<T>*   exch_ptr;
         Node<T>*   new_root;
@@ -282,7 +285,7 @@ class AVL {
         return root;
       }
 
-      Node<T>*   deleteRightBal(Node<T>* root, bool shorter) {
+      Node<T>*   deleteRightBal(Node<T> &root, bool shorter) {
         Node<T>*   right_tree;
         Node<T>*   left_tree;
 
@@ -357,7 +360,7 @@ class AVL {
           return root->data.second;
       }
 
-      void   _traversal(Node<T>* root, void (*func)(value_type)) {
+      void   _traversal(Node<T> &root, void (*func)(value_type)) {
         if (!root)
           return;
         _traversal(root->left, func);

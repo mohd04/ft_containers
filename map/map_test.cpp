@@ -1,8 +1,8 @@
 #include "../util.hpp"
-#include "avlTree.hpp"
+#include "map.hpp"
 #include <map>
 
 int main()
 {
-  ft::AVL<int, int> treee;
+  ft::map<int, int> tree;
 }

@@ -14,7 +14,7 @@ namespace ft {
 
     public:
       map_iterator() : _ptr(NULL), _tree(NULL) {}
-      map_iterator(Node* ptr, tree const *tree) : _ptr(ptr), _tree(tree) {}
+      map_iterator(Node* ptr, tree const *treee) : _ptr(ptr), _tree(treee) {}
       map_iterator(map_iterator const &other) { *this = other; }
       virtual ~map_iterator() {}
 
