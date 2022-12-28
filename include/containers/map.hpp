@@ -2,8 +2,8 @@
 # define MAPP_HPP
 
 # include <iostream>
-# include "../util.hpp"
-# include "map_iterator.hpp"
+# include "../utilities/util.hpp"
+# include "../utilities/map_iterator.hpp"
 
 # define LH +1   // Left High
 # define EH 0    // Even High
@@ -83,12 +83,12 @@ namespace ft
     }
 
     ~map() {
-      // clear();
+      clear();
     }
 
     map& operator= ( const map& x ) {
       if (this != &x) {
-        // clear();
+        clear();
         if (x._size > 0)
           insert(x.begin(), x.end());
       }
@@ -108,11 +108,17 @@ namespace ft
     }
 
     iterator end() {
-      return iterator();
+      node_pointer tmp = _root;
+      while (tmp->right != NULL)
+        tmp = tmp->right;
+      return iterator(tmp);
     }
 
     const_iterator end() const {
-      return const_iterator();
+      node_pointer tmp = _root;
+      while (tmp->right != NULL)
+        tmp = tmp->right;
+      return const_iterator(tmp);
     }
 
     reverse_iterator rbegin() {
@@ -170,6 +176,109 @@ namespace ft
       }
     }
 
+    void clear() {
+      _clear(_root);
+      _root = NULL;
+      _size = 0;
+    }
+
+    void swap(map& x) {
+      std::swap(_root, x._root);
+      std::swap(_size, x._size);
+      std::swap(_comp, x._comp);
+      std::swap(_alloc, x._alloc);
+      std::swap(_node_alloc, x._node_alloc);
+    }
+
+    size_type count(const key_type& k) const {
+      return (find(k) != end());
+    }
+
+    iterator find(const Key& k) {
+      node_pointer  node = _root;
+      while (node != NULL) {
+        if (_comp(k, node->data.first))
+          node = node->left;
+        else if (_comp(node->data.first, k))
+          node = node->right;
+        else
+        {
+          std::cout << "found" << node->data.first << std::endl;
+          return iterator(node);
+        }
+      }
+      return end();
+    }
+
+    const_iterator find(const key_type& k) const {
+      node_pointer  node = _root;
+      while (node != NULL) {
+        if (_comp(k, node->data.first))
+          node = node->left;
+        else if (_comp(node->data.first, k))
+          node = node->right;
+        else
+          return const_iterator(node);
+      }
+      return end();
+    }
+
+    std::pair<iterator, iterator> equal_range(const key_type& k) {
+      return std::pair<iterator, iterator>(lower_bound(k), upper_bound(k));
+    }
+
+    std::pair<const_iterator, const_iterator> equal_range(const key_type& k) const {
+      return std::pair<const_iterator, const_iterator>(lower_bound(k), upper_bound(k));
+    }
+
+    iterator lower_bound(const key_type& k) {
+      iterator  it = begin();
+      while (it != end()) {
+        if (!_comp(it->first, k))
+          return it;
+        it++;
+      }
+      return it;
+    }
+
+    const_iterator lower_bound(const key_type& k) const {
+      const_iterator  it = begin();
+      while (it != end()) {
+        if (!_comp(it->first, k))
+          return it;
+        it++;
+      }
+      return it;
+    }
+
+    iterator upper_bound(const key_type& k) {
+      iterator  it = begin();
+      while (it != end()) {
+        if (_comp(k, it->first))
+          return it;
+        it++;
+      }
+      return it;
+    }
+
+    const_iterator upper_bound(const key_type& k) const {
+      const_iterator  it = begin();
+      while (it != end()) {
+        if (_comp(k, it->first))
+          return it;
+        it++;
+      }
+      return it;
+    }
+
+    key_compare key_comp() const {
+      return _comp;
+    }
+
+    value_compare value_comp() const {
+      return value_compare(_comp);
+    }
+
     private:
       node_pointer  _create_node(const value_type& val) {
         node_pointer new_node = _node_alloc.allocate(1);
@@ -179,14 +288,12 @@ namespace ft
 
       bool    _insert(const value_type& val, node_pointer &node, bool &taller) {
         if (node == NULL) {
-          std::cout << "inserting: " << val.first << std::endl;
           node = _create_node(val);
           _size++;
           taller = true;
           return true;
         }
         if (_comp(val.first, node->data.first)) {
-          std::cout << "going left" << std::endl;
           _insert(val, node->left, taller);
           if (taller) {
             switch (node->bal) {
@@ -208,7 +315,6 @@ namespace ft
           return true;
         }
         else if (_comp(node->data.first, val.first)) {
-          std::cout << "going right" << std::endl;
           _insert(val, node->right, taller);
           if (taller) {
             switch (node->bal) {
@@ -328,7 +434,51 @@ namespace ft
         return left_tree;
       }
 
+      void  _clear(node_pointer &node) {
+        if (node == NULL) {
+          return;
+        }
+        _clear(node->left);
+        _clear(node->right);
+        _node_alloc.destroy(node);
+        _node_alloc.deallocate(node, 1);
+      }
   };
+
+  // template <class Key, class T, class Compare, class Alloc>
+  // bool operator==( const ft::map<Key,T,Compare,Alloc>& lhs, const ft::map<Key,T,Compare,Alloc>& rhs ) {
+  //   return (lhs.size() == rhs.size() && ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
+  // }
+
+  template <class Key, class T, class Compare, class Alloc>
+  bool operator!=( const ft::map<Key,T,Compare,Alloc>& lhs, const ft::map<Key,T,Compare,Alloc>& rhs ) {
+    return !(lhs == rhs);
+  }
+
+  template <class Key, class T, class Compare, class Alloc>
+  bool operator<( const ft::map<Key,T,Compare,Alloc>& lhs, const ft::map<Key,T,Compare,Alloc>& rhs ) {
+    return ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+  }
+
+  template <class Key, class T, class Compare, class Alloc>
+  bool operator<=( const ft::map<Key,T,Compare,Alloc>& lhs, const ft::map<Key,T,Compare,Alloc>& rhs ) {
+    return !(rhs < lhs);
+  }
+
+  template <class Key, class T, class Compare, class Alloc>
+  bool operator>( const ft::map<Key,T,Compare,Alloc>& lhs, const ft::map<Key,T,Compare,Alloc>& rhs ) {
+    return (rhs < lhs);
+  }
+
+  template <class Key, class T, class Compare, class Alloc>
+  bool operator>=( const ft::map<Key,T,Compare,Alloc>& lhs, const ft::map<Key,T,Compare,Alloc>& rhs ) {
+    return !(lhs < rhs);
+  }
+
+  template <class Key, class T, class Compare, class Alloc>
+  void swap (ft::map<Key,T,Compare,Alloc>& x, ft::map<Key,T,Compare,Alloc>& y) {
+    x.swap(y);
+  }
 }
 
 

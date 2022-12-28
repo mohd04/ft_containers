@@ -1,3 +1,5 @@
 .vscode
 *.o
 a.out
+mapp
+tester/
