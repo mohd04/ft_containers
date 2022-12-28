@@ -53,21 +53,21 @@ class AVL {
     }
 
     bool  AVL_insert(T obj) {
-      ft::Node<T>*  node = _node_allocator.allocate(1);
-      _node_allocator.construct(node);
-      node->data = _allocator.allocate(1);
-      _allocator.construct(node->data, obj);
-      // Node<T>   new_ptr;
-      // bool    for_taller;
+      // ft::Node<T>*  node = _node_allocator.allocate(1);
+      // _node_allocator.construct(node);
+      // node->data = _allocator.allocate(1);
+      // _allocator.construct(node->data, obj);
+      Node<T>   new_ptr;
+      bool    for_taller;
 
-      // new_ptr = _node_allocator().allocate(1);
-      // new_ptr.bal = EH;
-      // new_ptr.right = NULL;
-      // new_ptr.left = NULL;
-      // new_ptr.bal = data;
+      new_ptr = _node_allocator().allocate(1);
+      new_ptr.bal = EH;
+      new_ptr.right = NULL;
+      new_ptr.left = NULL;
+      new_ptr.bal = data;
 
-      // tree._root = _insert(new_ptr, data, for_taller);
-      // (tree._size)++;
+      tree._root = _insert(new_ptr, data, for_taller);
+      (tree._size)++;
       return true;
     }
 

@@ -5,6 +5,10 @@
 # include "../util.hpp"
 # include "map_iterator.hpp"
 
+# define LH +1   // Left High
+# define EH 0    // Even High
+# define RH -1   // Right High
+
 namespace ft
 {
   template < class Key,
@@ -12,37 +16,41 @@ namespace ft
               class Compare = std::less<Key>,
               class Alloc = std::allocator<std::pair<const Key,T> > >
   class map {
-    typedef Key                                                     key_type;
-    typedef T                                                       mapped_type;
-    typedef std::pair<const key_type, mapped_type>                  value_type;
-    typedef Compare                                                 key_compare;
-    typedef Alloc                                                   allocator_type;
-    typedef value_type&                                             reference;
-    typedef const value_type&                                       const_reference;
-    typedef size_t                                                  size_type;
-    typedef ptrdiff_t                                               difference_type;
-    typedef typename Alloc::pointer                                 pointer;
-    typedef typename Alloc::const_pointer                           const_pointer;
-    typedef Node<value_type>                                        Node_type;
-    typedef Node_type*                                              node_pointer;
-    typedef ft::map_iterator<std::bidirectional_iterator_tag, value_type, key_compare, node_pointer> iterator;
-    typedef ft::map_iterator<std::bidirectional_iterator_tag, const value_type, key_compare, node_pointer> const_iterator;
-    typedef ft::reverse_iterator<iterator>                          reverse_iterator;
-    typedef ft::reverse_iterator<const_iterator>                    const_reverse_iterator;
-    typedef typename allocator_type::template rebind<Node>::other   node_allocator;
+    public:
 
-    class value_compare : public std::binary_function<value_type, value_type, bool> {
-      protected:
-        Compare comp;
-        value_compare (Compare c) : comp(c) {}
-      public:
-        typedef bool result_type;
-        typedef value_type first_argument_type;
-        typedef value_type second_argument_type;
-        bool operator() (const value_type& x, const value_type& y) const {
-          return comp(x.first, y.first);
-        }
-    };
+      typedef Key                                                     key_type;
+      typedef T                                                       mapped_type;
+      typedef ft::pair<const key_type, mapped_type>                   value_type;
+      typedef Compare                                                 key_compare;
+
+      class value_compare : public std::binary_function<value_type, value_type, bool> {
+        protected:
+          Compare comp;
+          value_compare (Compare c) : comp(c) {}
+        public:
+          typedef bool result_type;
+          typedef value_type first_argument_type;
+          typedef value_type second_argument_type;
+          bool operator() (const value_type& x, const value_type& y) const {
+            return comp(x.first, y.first);
+          }
+      };
+
+      typedef Alloc                                                   allocator_type;
+      typedef typename allocator_type::reference                      reference;
+      typedef typename allocator_type::const_reference                const_reference;
+      typedef typename allocator_type::pointer                        pointer;
+      typedef typename allocator_type::const_pointer                  const_pointer;
+      typedef size_t                                                  size_type;
+      typedef std::ptrdiff_t                                          difference_type;
+      typedef Node<value_type>                                        node_type;
+      typedef node_type*                                              node_pointer;
+      typedef ft::map_iterator<value_type, node_pointer>              iterator;
+      typedef ft::map_iterator<const value_type, node_pointer>        const_iterator;
+      typedef ft::reverse_iterator<iterator>                          reverse_iterator;
+      typedef ft::reverse_iterator<const_iterator>                    const_reverse_iterator;
+      typedef typename allocator_type::template rebind<node_type>::other   node_allocator;
+
 
     private:
       node_pointer        _root;
@@ -50,7 +58,6 @@ namespace ft
       key_compare         _comp;
       allocator_type      _alloc;
       node_allocator      _node_alloc;
-      node_pointer        _end;
 
     public:
 
@@ -58,7 +65,6 @@ namespace ft
                   const allocator_type& alloc = allocator_type() ) : _comp(comp), _alloc(alloc) {
       _root = NULL;
       _size = 0;
-      _end = _create_node(value_type());
     }
 
     template <class InputIterator>
@@ -67,21 +73,17 @@ namespace ft
          const allocator_type& alloc = allocator_type() ) : _comp(comp), _alloc(alloc) {
             _size = 0;
             _root = NULL;
-            _end = _create_node(value_type());
-            // insert(first, last);
+            insert(first, last);
          }
 
     map( const map& x ) : _comp(x._comp), _alloc(x._alloc) {
       _root = NULL;
       _size = 0;
-      _end = _create_node(value_type());
       *this = x;
     }
 
     ~map() {
       // clear();
-      _node_alloc.destroy(_end);
-      _node_alloc.deallocate(_end, 1);
     }
 
     map& operator= ( const map& x ) {
@@ -95,22 +97,22 @@ namespace ft
 
     iterator begin() {
       if (this->_size == 0)
-        return iterator(_end);
+        return iterator();
       return iterator(_root);
     }
 
     const_iterator begin() const {
       if (this->_size == 0)
-        return const_iterator(_end);
+        return const_iterator();
       return const_iterator(_root);
     }
 
     iterator end() {
-      return iterator(_end);
+      return iterator();
     }
 
     const_iterator end() const {
-      return const_iterator(_end);
+      return const_iterator();
     }
 
     reverse_iterator rbegin() {
@@ -155,13 +157,9 @@ namespace ft
     }
 
     std::pair<iterator, bool>   insert(const value_type& value) {
-      if (_root == NULL) {
-        _insert_root(value);
-        return std::pair<iterator, bool>(iterator(_root), true);
-      }
-      if (_insert_node(value, _root))
-        return std::pair<iterator, bool>(iterator(_root), true);
-      return std::pair<iterator, bool>(iterator(_root), false);
+      bool  taller = false;
+      bool  inserted = _insert(value, _root, taller);
+      return std::pair<iterator, bool>(iterator(_root), inserted);
     }
 
     template <class InputIterator>
@@ -175,55 +173,159 @@ namespace ft
     private:
       node_pointer  _create_node(const value_type& val) {
         node_pointer new_node = _node_alloc.allocate(1);
-        _node_alloc.construct(new_node, node(val, NULL, NULL, NULL));
+        _node_alloc.construct(new_node, node_type(val, NULL, NULL, NULL));
         return new_node;
       }
 
-      bool          _insert_node(const value_type &val, node_pointer node) {
-        if (this->_comp(val.first, node->data.first)) {
-          if (node->left == NULL) {
-            node->left = _create_node(val);
-            node->left->parent = node;
-            this->_size++;
-            return true;
-          }
-          return _insert_node(val, node->left);
+      bool    _insert(const value_type& val, node_pointer &node, bool &taller) {
+        if (node == NULL) {
+          std::cout << "inserting: " << val.first << std::endl;
+          node = _create_node(val);
+          _size++;
+          taller = true;
+          return true;
         }
-        else if (this->_comp(node->data.first, val.first)) {
-          if (node->right == NULL) {
-            node->right = _create_node(val);
-            node->right->parent = node;
-            this->_size++;
-            return true;
+        if (_comp(val.first, node->data.first)) {
+          std::cout << "going left" << std::endl;
+          _insert(val, node->left, taller);
+          if (taller) {
+            switch (node->bal) {
+              case LH:
+                node = _left_balance(node, taller);
+                break;
+
+              case EH:
+                node->bal = LH;
+                taller = true;
+                break;
+
+              case RH:
+                node->bal = EH;
+                taller = false;
+                break;
+            }
           }
-          else if (node->right == _end) {
-            node->right = _create_node(val);
-            node->right->parent = node;
-            this->_size++;
-            return true;
+          return true;
+        }
+        else if (_comp(node->data.first, val.first)) {
+          std::cout << "going right" << std::endl;
+          _insert(val, node->right, taller);
+          if (taller) {
+            switch (node->bal) {
+              case LH:
+                node->bal = EH;
+                taller = false;
+                break;
+
+              case EH:
+                node->bal = RH;
+                taller = true;
+                break;
+
+              case RH:
+                node = _right_balance(node, taller);
+                break;
+            }
           }
-          return _insert_node(val, node->right);
+          return true;
         }
         return false;
       }
 
-      bool          _insert_root(const value_type &val) {
-        if (!this->_root) {
-          this->_root = _create_node(val);
-          _end->parent = this->_root;
-          this->_root->parent = _end;
-          this->_size++;
-          return true;
+      node_pointer  _left_balance(node_pointer &node, bool &taller) {
+        node_pointer left_tree = node->left;
+        switch (left_tree->bal) {
+          case LH:
+            node->bal = EH;
+            left_tree->bal = EH;
+            node = _rotate_right(node);
+            taller = false;
+            break;
+
+          case EH:
+            std::cout << "Error: _left_balance: left_tree->bal == EH" << std::endl;
+            break;
+
+          case RH:
+            node_pointer right_tree = left_tree->right;
+            switch (right_tree->bal) {
+              case LH:
+                node->bal = RH;
+                left_tree->bal = EH;
+                break;
+
+              case EH:
+                node->bal = EH;
+                left_tree->bal = EH;
+                break;
+
+              case RH:
+                node->bal = EH;
+                left_tree->bal = LH;
+                break;
+            }
+            right_tree->bal = EH;
+            node->left = _rotate_left(left_tree);
+            node = _rotate_right(node);
+            taller = false;
+            break;
         }
-        if (this->_root == _end) {
-          node_pointer  tmp = _create_node(val);
-          this->_root->parent = tmp;
-          tmp->right = this->_root;
-          this->_root = tmp;
-          this->_size++;
-          return true;
+        return node;
+      }
+
+      node_pointer  _right_balance(node_pointer &node, bool &taller) {
+        node_pointer right_tree = node->right;
+        switch (right_tree->bal) {
+          case RH:
+            node->bal = EH;
+            right_tree->bal = EH;
+            node = _rotate_left(node);
+            taller = false;
+            break;
+
+          case EH:
+            std::cout << "Error: _right_balance: right_tree->bal == EH" << std::endl;
+            break;
+
+          case LH:
+            node_pointer left_tree = right_tree->left;
+            switch (left_tree->bal) {
+              case RH:
+                node->bal = LH;
+                right_tree->bal = EH;
+                break;
+
+              case EH:
+                node->bal = EH;
+                right_tree->bal = EH;
+                break;
+
+              case LH:
+                node->bal = EH;
+                right_tree->bal = RH;
+                break;
+            }
+            left_tree->bal = EH;
+            node->right = _rotate_right(right_tree);
+            node = _rotate_left(node);
+            taller = false;
+            break;
         }
-        return false;
+        return node;
+      }
+
+      node_pointer  _rotate_left(node_pointer &node) {
+        node_pointer right_tree = node->right;
+        node->right = right_tree->left;
+        right_tree->left = node;
+        return right_tree;
+      }
+
+      node_pointer  _rotate_right(node_pointer &node) {
+        node_pointer left_tree = node->left;
+        node->left = left_tree->right;
+        left_tree->right = node;
+        return left_tree;
       }
 
   };

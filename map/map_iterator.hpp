@@ -4,26 +4,29 @@
 # include "../util.hpp"
 
 namespace ft {
-  template<class T, class Node, class Compare, class tree>
-  class map_iterator : std::iterator<std::bidirectional_iterator_tag, T> {
+  template<typename T, typename node_pointer>
+  class map_iterator {
+
+    typedef T value_type;
+    typedef value_type* pointer;
+    typedef value_type& reference;
+    typedef std::ptrdiff_t difference_type;
+    typedef ft::bidirectional_iterator_tag iterator_category;
 
     private:
-      Node*             _ptr;
-      tree              const *_tree;
-      Compare           _comp;
+      node_pointer             _ptr;
 
     public:
-      map_iterator() : _ptr(NULL), _tree(NULL) {}
-      map_iterator(Node* ptr, tree const *treee) : _ptr(ptr), _tree(treee) {}
-      map_iterator(map_iterator const &other) { *this = other; }
+      map_iterator() : _ptr(NULL) {}
+      map_iterator(node_pointer ptr) : _ptr(ptr) {}
+      map_iterator(map_iterator const &other) : _ptr(other._ptr) { *this = other; }
       virtual ~map_iterator() {}
 
-      Node* base() const { return _ptr; }
+      node_pointer base() const { return _ptr; }
 
       map_iterator& operator=(map_iterator const &other) {
         if (this != &other) {
           _ptr = other._ptr;
-          _tree = other._tree;
         }
         return *this;
       }
@@ -39,7 +42,7 @@ namespace ft {
             _ptr = _ptr->left;
         }
         else {
-          Node* tmp = _ptr->parent;
+          node_pointer tmp = _ptr->parent;
           while (tmp && _ptr == tmp->right) {
             _ptr = tmp;
             tmp = tmp->parent;
@@ -62,7 +65,7 @@ namespace ft {
             _ptr = _ptr->right;
         }
         else {
-          Node* tmp = _ptr->parent;
+          node_pointer tmp = _ptr->parent;
           while (tmp && _ptr == tmp->left) {
             _ptr = tmp;
             tmp = tmp->parent;

@@ -2,7 +2,7 @@ NAME = containers
 NAME_VEC = vec
 NAME_MAP = mapp
 
-CPP = c++
+CPP = c++ -g
 
 CPPFLAGS = -Wall -Werror -Wextra -std=c++98
 
