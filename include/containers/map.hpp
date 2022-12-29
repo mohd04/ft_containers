@@ -96,9 +96,14 @@ namespace ft
     }
 
     iterator begin() {
-      if (this->_size == 0)
-        return iterator();
-      return iterator(_root);
+      node_pointer n = _root;
+      if (!n->left && !n->right)
+        return (end());
+      if (!n->left && n->right)
+        n = n->right;
+      while (n->left)
+        n = n->left;
+      return (iterator(n));
     }
 
     const_iterator begin() const {
@@ -163,9 +168,8 @@ namespace ft
     }
 
     std::pair<iterator, bool>   insert(const value_type& value) {
-      bool  taller = false;
-      bool  inserted = _insert(value, _root, taller);
-      return std::pair<iterator, bool>(iterator(_root), inserted);
+      _root = _insert(value, _root);
+      return std::pair<iterator, bool>(iterator(_root), true);
     }
 
     template <class InputIterator>
@@ -194,7 +198,7 @@ namespace ft
       return (find(k) != end());
     }
 
-    iterator find(const Key& k) {
+    iterator find(const key_type& k) {
       node_pointer  node = _root;
       while (node != NULL) {
         if (_comp(k, node->data.first))
@@ -280,157 +284,84 @@ namespace ft
     }
 
     private:
-      node_pointer  _create_node(const value_type& val) {
+      node_pointer  _create_node(const value_type& val, node_pointer parent) {
         node_pointer new_node = _node_alloc.allocate(1);
-        _node_alloc.construct(new_node, node_type(val, NULL, NULL, NULL));
+        _node_alloc.construct(new_node, node_type(val, NULL, NULL, parent));
         return new_node;
       }
 
-      bool    _insert(const value_type& val, node_pointer &node, bool &taller) {
+      int height(node_pointer node) {
+        if (node == NULL) return 0;
+        return node->height;
+      }
+
+      int getBalance(node_pointer N) {
+        if (N == NULL) return 0;
+        return height(N->left) - height(N->right);
+      }
+
+      node_pointer    _insert(const value_type& val, node_pointer node) {
         if (node == NULL) {
-          node = _create_node(val);
           _size++;
-          taller = true;
-          return true;
+          return _create_node(val, node);
         }
+
         if (_comp(val.first, node->data.first)) {
-          _insert(val, node->left, taller);
-          if (taller) {
-            switch (node->bal) {
-              case LH:
-                node = _left_balance(node, taller);
-                break;
-
-              case EH:
-                node->bal = LH;
-                taller = true;
-                break;
-
-              case RH:
-                node->bal = EH;
-                taller = false;
-                break;
-            }
-          }
-          return true;
+          node->left = _insert(val, node->left);
+          std::cout << "left val: " << node->left->data.first << std::endl;
         }
         else if (_comp(node->data.first, val.first)) {
-          _insert(val, node->right, taller);
-          if (taller) {
-            switch (node->bal) {
-              case LH:
-                node->bal = EH;
-                taller = false;
-                break;
-
-              case EH:
-                node->bal = RH;
-                taller = true;
-                break;
-
-              case RH:
-                node = _right_balance(node, taller);
-                break;
-            }
-          }
-          return true;
+          node->right = _insert(val, node->right);
+          std::cout << "right val: " << node->right->data.first << std::endl;
         }
-        return false;
-      }
+        else
+          return node;
 
-      node_pointer  _left_balance(node_pointer &node, bool &taller) {
-        node_pointer left_tree = node->left;
-        switch (left_tree->bal) {
-          case LH:
-            node->bal = EH;
-            left_tree->bal = EH;
-            node = _rotate_right(node);
-            taller = false;
-            break;
+        node->height = 1 + std::max(height(node->left), height(node->right));
 
-          case EH:
-            std::cout << "Error: _left_balance: left_tree->bal == EH" << std::endl;
-            break;
+        int bal = height(node->left) - height(node->right);
 
-          case RH:
-            node_pointer right_tree = left_tree->right;
-            switch (right_tree->bal) {
-              case LH:
-                node->bal = RH;
-                left_tree->bal = EH;
-                break;
+        if (bal > LH && _comp(val.first, node->left->data.first))
+          return _rotate_right(node);
 
-              case EH:
-                node->bal = EH;
-                left_tree->bal = EH;
-                break;
+        if (bal < RH && _comp(node->right->data.first, val.first))
+          return _rotate_left(node);
 
-              case RH:
-                node->bal = EH;
-                left_tree->bal = LH;
-                break;
-            }
-            right_tree->bal = EH;
-            node->left = _rotate_left(left_tree);
-            node = _rotate_right(node);
-            taller = false;
-            break;
+        if (bal > LH && _comp(node->left->data.first, val.first)) {
+          node->left = _rotate_left(node->left);
+          return _rotate_right(node);
         }
-        return node;
-      }
 
-      node_pointer  _right_balance(node_pointer &node, bool &taller) {
-        node_pointer right_tree = node->right;
-        switch (right_tree->bal) {
-          case RH:
-            node->bal = EH;
-            right_tree->bal = EH;
-            node = _rotate_left(node);
-            taller = false;
-            break;
-
-          case EH:
-            std::cout << "Error: _right_balance: right_tree->bal == EH" << std::endl;
-            break;
-
-          case LH:
-            node_pointer left_tree = right_tree->left;
-            switch (left_tree->bal) {
-              case RH:
-                node->bal = LH;
-                right_tree->bal = EH;
-                break;
-
-              case EH:
-                node->bal = EH;
-                right_tree->bal = EH;
-                break;
-
-              case LH:
-                node->bal = EH;
-                right_tree->bal = RH;
-                break;
-            }
-            left_tree->bal = EH;
-            node->right = _rotate_right(right_tree);
-            node = _rotate_left(node);
-            taller = false;
-            break;
+        if (bal < RH && _comp(val.first, node->right->data.first)) {
+          node->right = _rotate_right(node->right);
+          return _rotate_left(node);
         }
+
         return node;
       }
 
       node_pointer  _rotate_left(node_pointer &node) {
+        std::cout << "rotate left val: " << node->data.first << std::endl;
         node_pointer right_tree = node->right;
-        node->right = right_tree->left;
+        node_pointer N2 = right_tree->left;
+
         right_tree->left = node;
+        node->right = N2;
+
+        node->height = std::max(height(node->left), height(node->right)) + 1;
+        right_tree->height = std::max(height(right_tree->left), height(right_tree->right)) + 1;
         return right_tree;
       }
 
       node_pointer  _rotate_right(node_pointer &node) {
+        std::cout << "rotate right val: " << node->data.first << std::endl;
         node_pointer left_tree = node->left;
-        node->left = left_tree->right;
+        node_pointer N2 = left_tree->right;
         left_tree->right = node;
+        node->left = N2;
+
+        node->height = std::max(height(node->left), height(node->right)) + 1;
+        left_tree->height = std::max(height(left_tree->left), height(left_tree->right)) + 1;
         return left_tree;
       }
 
@@ -447,7 +378,7 @@ namespace ft
 
   // template <class Key, class T, class Compare, class Alloc>
   // bool operator==( const ft::map<Key,T,Compare,Alloc>& lhs, const ft::map<Key,T,Compare,Alloc>& rhs ) {
-  //   return (lhs.size() == rhs.size() && ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
+  //   return (lhs.size() == rhs.size() && std::equal(lhs.begin(), lhs.end(), rhs.begin()));
   // }
 
   template <class Key, class T, class Compare, class Alloc>

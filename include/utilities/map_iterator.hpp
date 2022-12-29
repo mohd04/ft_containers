@@ -36,12 +36,14 @@ namespace ft {
       T& operator*() const { return *_ptr->data; }
 
       map_iterator& operator++() {
+        std::cout << "Check iterator" << std::endl;
         if (_ptr->right) {
           _ptr = _ptr->right;
           while (_ptr->left)
             _ptr = _ptr->left;
         }
         else {
+          std::cout << "here" << std::endl;
           node_pointer tmp = _ptr->parent;
           while (tmp && _ptr == tmp->right) {
             _ptr = tmp;
