@@ -103,6 +103,7 @@ namespace ft
         n = n->right;
       while (n->left)
         n = n->left;
+      n->parent = _root;
       return (iterator(n));
     }
 
@@ -167,8 +168,20 @@ namespace ft
       return insert(val).first;
     }
 
+    void inOrder(node_pointer root) {
+      if (root != NULL) {
+        inOrder(root->left);
+        std::cout << root->data.first << " " << root->data.second << std::endl;
+        inOrder(root->right);
+      }
+    }
+
     std::pair<iterator, bool>   insert(const value_type& value) {
       _root = _insert(value, _root);
+      // node_pointer tmp = _root;
+      // std::cout << "Before while" << std::endl;
+      // inOrder(tmp);
+      // std::cout << "After while" << std::endl;
       return std::pair<iterator, bool>(iterator(_root), true);
     }
 
@@ -308,11 +321,11 @@ namespace ft
 
         if (_comp(val.first, node->data.first)) {
           node->left = _insert(val, node->left);
-          std::cout << "left val: " << node->left->data.first << std::endl;
+          // std::cout << "left val: " << node->left->data.first << std::endl;
         }
         else if (_comp(node->data.first, val.first)) {
           node->right = _insert(val, node->right);
-          std::cout << "right val: " << node->right->data.first << std::endl;
+          // std::cout << "right val: " << node->right->data.first << std::endl;
         }
         else
           return node;
@@ -341,7 +354,7 @@ namespace ft
       }
 
       node_pointer  _rotate_left(node_pointer &node) {
-        std::cout << "rotate left val: " << node->data.first << std::endl;
+        // std::cout << "rotate left val: " << node->data.first << std::endl;
         node_pointer right_tree = node->right;
         node_pointer N2 = right_tree->left;
 
@@ -354,7 +367,7 @@ namespace ft
       }
 
       node_pointer  _rotate_right(node_pointer &node) {
-        std::cout << "rotate right val: " << node->data.first << std::endl;
+        // std::cout << "rotate right val: " << node->data.first << std::endl;
         node_pointer left_tree = node->left;
         node_pointer N2 = left_tree->right;
         left_tree->right = node;

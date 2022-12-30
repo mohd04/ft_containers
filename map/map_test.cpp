@@ -17,12 +17,11 @@ void ft_map() {
   ft::map<int, int>::iterator end = tree.end();
   std::cout << "Value of end: " << end->first << ":" << end->second << std::endl;
 
-  std::cout << "check: " << (it != end) << std::endl;
   while (it != end)
   {
-    std::cout << "Check" << std::endl;
+    // std::cout << "Check" << std::endl;
     std::cout << it->first << ":" << it->second << std::endl;
-    std::cout << "Ctest" << std::endl;
+    // std::cout << "Ctest" << std::endl;
     it++;
   }
   std::cout << "-------------------------------------" << std::endl;
@@ -37,6 +36,7 @@ void std_map() {
   std_tree.insert(std::pair<int, int>(-32, 1));
 
   std::map<int, int>::iterator it = std_tree.begin();
+  std::cout << "Value of begin: " << it->first << ":" << it->second << std::endl;
   std::map<int, int>::iterator end = std_tree.end();
   std::cout << "Value of end: " << end->first << ":" << end->second << std::endl;
 
