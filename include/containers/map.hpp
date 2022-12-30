@@ -58,6 +58,7 @@ namespace ft
       key_compare         _comp;
       allocator_type      _alloc;
       node_allocator      _node_alloc;
+      node_pointer        _sentinel;
 
     public:
 
@@ -65,6 +66,7 @@ namespace ft
                   const allocator_type& alloc = allocator_type() ) : _comp(comp), _alloc(alloc) {
       _root = NULL;
       _size = 0;
+      _sentinel = _create_node(value_type(), NULL);
     }
 
     template <class InputIterator>
@@ -97,7 +99,7 @@ namespace ft
 
     iterator begin() {
       node_pointer n = _root;
-      if (!n->left && !n->right)
+      if (_size == 0)
         return (end());
       if (!n->left && n->right)
         n = n->right;
@@ -114,16 +116,22 @@ namespace ft
     }
 
     iterator end() {
+      if (_root == NULL)
+        return iterator(_sentinel);
       node_pointer tmp = _root;
       while (tmp->right != NULL)
         tmp = tmp->right;
+      tmp = tmp->right = _sentinel;
       return iterator(tmp);
     }
 
     const_iterator end() const {
+      if (_root == NULL)
+        return const_iterator(_sentinel);
       node_pointer tmp = _root;
       while (tmp->right != NULL)
         tmp = tmp->right;
+      tmp = tmp->right = _sentinel;
       return const_iterator(tmp);
     }
 
@@ -168,21 +176,60 @@ namespace ft
       return insert(val).first;
     }
 
-    void inOrder(node_pointer root) {
+    bool inOrder(node_pointer root, key_type key) {
       if (root != NULL) {
-        inOrder(root->left);
-        std::cout << root->data.first << " " << root->data.second << std::endl;
-        inOrder(root->right);
+        inOrder(root->left, key);
+        if (root->data.first == key)
+          return true;
+        inOrder(root->right, key);
+        if (root->data.first == key)
+          return true;
+      }
+      return false;
+    }
+
+    void printTree(node_pointer root) {
+      if (root != NULL) {
+        printTree(root->left);
+        std::cout << root->data.first << std::endl;
+        printTree(root->right);
       }
     }
 
-    std::pair<iterator, bool>   insert(const value_type& value) {
+    void print2DUtil(node_pointer root, int space) {
+    // Base case
+    if (root == NULL) return;
+
+    // Increase distance between levels
+    space += 10;
+
+    // Process right child first
+    print2DUtil(root->right, space);
+
+    // Print current node after space
+    // count
+    std::cout << std::endl;
+    for (int i = 10; i < space; i++) std::cout << " ";
+    std::cout << root->data.first << "(" << getBalance(root) << ")" << std::endl;
+
+    // Process left child
+    print2DUtil(root->left, space);
+  }
+
+  // Wrapper over print2DUtil()
+  void print2D() {
+    std::cout << "Tree:" << std::endl;
+    // Pass initial space count as 0
+    print2DUtil(_root, 0);
+  }
+
+    ft::pair<iterator, bool>   insert(const value_type& value) {
+      if (inOrder(_root, value.first)) {
+        return ft::pair<iterator, bool>(find(value.first), false);
+      }
+      // printTree(_root);
       _root = _insert(value, _root);
-      // node_pointer tmp = _root;
-      // std::cout << "Before while" << std::endl;
-      // inOrder(tmp);
-      // std::cout << "After while" << std::endl;
-      return std::pair<iterator, bool>(iterator(_root), true);
+      return ft::pair<iterator, bool>(find(value.first), true);
     }
 
     template <class InputIterator>
@@ -220,7 +267,6 @@ namespace ft
           node = node->right;
         else
         {
-          std::cout << "found" << node->data.first << std::endl;
           return iterator(node);
         }
       }
@@ -313,25 +359,7 @@ namespace ft
         return height(N->left) - height(N->right);
       }
 
-      node_pointer    _insert(const value_type& val, node_pointer node) {
-        if (node == NULL) {
-          _size++;
-          return _create_node(val, node);
-        }
-
-        if (_comp(val.first, node->data.first)) {
-          node->left = _insert(val, node->left);
-          // std::cout << "left val: " << node->left->data.first << std::endl;
-        }
-        else if (_comp(node->data.first, val.first)) {
-          node->right = _insert(val, node->right);
-          // std::cout << "right val: " << node->right->data.first << std::endl;
-        }
-        else
-          return node;
-
-        node->height = 1 + std::max(height(node->left), height(node->right));
-
+      node_pointer    _balance(node_pointer node, const value_type& val) {
         int bal = height(node->left) - height(node->right);
 
         if (bal > LH && _comp(val.first, node->left->data.first))
@@ -353,8 +381,69 @@ namespace ft
         return node;
       }
 
+      node_pointer    _insert(const value_type& val, node_pointer node) {
+        if (node == NULL) {
+          _size++;
+          return _create_node(val, node);
+        }
+
+        if (_comp(val.first, node->data.first)) {
+          node->left = _insert(val, node->left);
+          node->left->parent = node;
+        }
+        else if (_comp(node->data.first, val.first)) {
+          node->right = _insert(val, node->right);
+          node->right->parent = node;
+        }
+        else
+          return node;
+
+        node->height = 1 + std::max(height(node->left), height(node->right));
+
+        return _balance(node, val);
+      }
+
+      node_pointer  _delete_node(node_pointer node) {
+        _node_alloc.destroy(node);
+        _node_alloc.deallocate(node, 1);
+        return NULL;
+      }
+
+      node_pointer  _delete(node_pointer node, const key_type& val) {
+        if (node == NULL)
+          return node;
+
+        if (_comp(val.first, node->data.first))
+          node->left = _delete(node->left, val);
+        else if (_comp(node->data.first, val.first))
+          node->right = _delete(node->right, val);
+        else {
+          if ((node->left == NULL) || (node->right == NULL)) {
+            node_pointer temp = node->left ? node->left : node->right;
+            if (temp == NULL) {
+              temp = node;
+              node = NULL;
+            }
+            else
+              *node = *temp;
+            _delete_node(temp);
+          }
+          else {
+            node_pointer temp = _min(node->right);
+            node->data = temp->data;
+            node->right = _delete(node->right, temp->data.first);
+          }
+        }
+
+        if (node == NULL)
+          return node;
+
+        node->height = 1 + std::max(height(node->left), height(node->right));
+
+        return _balance(node, val);
+      }
+
       node_pointer  _rotate_left(node_pointer &node) {
-        // std::cout << "rotate left val: " << node->data.first << std::endl;
         node_pointer right_tree = node->right;
         node_pointer N2 = right_tree->left;
 
@@ -367,7 +456,6 @@ namespace ft
       }
 
       node_pointer  _rotate_right(node_pointer &node) {
-        // std::cout << "rotate right val: " << node->data.first << std::endl;
         node_pointer left_tree = node->left;
         node_pointer N2 = left_tree->right;
         left_tree->right = node;

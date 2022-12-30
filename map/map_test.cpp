@@ -1,47 +1,50 @@
 #include "../include/containers/map.hpp"
+#include <iostream>
 #include <map>
 
 void ft_map() {
-  ft::map<int, int> tree;
-  ft::map<int, int> tree2;
+  ft::map<int, std::string> mp, mp2;
 
-  tree.insert(ft::pair<int, int>(1, 1));
-  tree.insert(ft::pair<int, int>(-1, 1));
-  tree.insert(ft::pair<int, int>(4, 1));
-  tree.insert(ft::pair<int, int>(5, 1));
-  tree.insert(ft::pair<int, int>(-32, 1));
-  tree.insert(ft::pair<int, int>(0, 1));
+  mp.insert(ft::pair<int, std::string>(42, "lol"));
+  mp.insert(ft::pair<int, std::string>(42, "hello"));
+  mp.insert(ft::pair<int, std::string>(50, "mdr"));
+  mp.insert(ft::pair<int, std::string>(35, "funny"));
+  mp.insert(ft::pair<int, std::string>(45, "bunny"));
+  mp.insert(ft::pair<int, std::string>(21, "fizz"));
+  mp.insert(ft::pair<int, std::string>(38, "buzz"));
 
-  ft::map<int, int>::iterator it = tree.begin();
-  std::cout << "Value of begin: " << it->first << ":" << it->second << std::endl;
-  ft::map<int, int>::iterator end = tree.end();
-  std::cout << "Value of end: " << end->first << ":" << end->second << std::endl;
+  mp.print2D();
 
-  while (it != end)
-  {
-    // std::cout << "Check" << std::endl;
-    std::cout << it->first << ":" << it->second << std::endl;
-    // std::cout << "Ctest" << std::endl;
+  ft::map<int, std::string>::iterator it = mp.begin();
+  std::cout << "begin" << it->first << " " << it->second << std::endl;
+  ft::map<int, std::string>::iterator ite = mp.end();
+  std::cout << ite->first << " " << ite->second << std::endl;
+
+  while (it != ite) {
+    std::cout << it->first << " " << it->second << std::endl;
     it++;
   }
-  std::cout << "-------------------------------------" << std::endl;
+  std::cout << "----------------" << std::endl;
 }
 
 void std_map() {
-  std::map<int, int> std_tree;
-  std_tree.insert(std::pair<int, int>(1, 1));
-  std_tree.insert(std::pair<int, int>(-1, 1));
-  std_tree.insert(std::pair<int, int>(4, 1));
-  std_tree.insert(std::pair<int, int>(5, 1));
-  std_tree.insert(std::pair<int, int>(-32, 1));
+  std::map<int, std::string> mp;
 
-  std::map<int, int>::iterator it = std_tree.begin();
-  std::cout << "Value of begin: " << it->first << ":" << it->second << std::endl;
-  std::map<int, int>::iterator end = std_tree.end();
-  std::cout << "Value of end: " << end->first << ":" << end->second << std::endl;
+  mp.insert(std::pair<int, std::string>(42, "lol"));
+  mp.insert(std::pair<int, std::string>(42, "hello"));
+  mp.insert(std::pair<int, std::string>(50, "mdr"));
+  mp.insert(std::pair<int, std::string>(35, "funny"));
+  mp.insert(std::pair<int, std::string>(45, "bunny"));
+  mp.insert(std::pair<int, std::string>(21, "fizz"));
+  mp.insert(std::pair<int, std::string>(38, "buzz"));
 
-  while (it != end) {
-    std::cout << it->first << ":" << it->second << std::endl;
+  std::map<int, std::string>::iterator it = mp.begin();
+  std::cout << it->first << " " << it->second << std::endl;
+  std::map<int, std::string>::iterator ite = mp.end();
+  std::cout << ite->first << " " << ite->second << std::endl;
+
+  while (it != ite) {
+    std::cout << it->first << " " << it->second << std::endl;
     it++;
   }
 
