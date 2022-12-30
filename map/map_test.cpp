@@ -13,7 +13,7 @@ void ft_map() {
   tree.insert(ft::pair<int, int>(0, 1));
 
   ft::map<int, int>::iterator it = tree.begin();
-  std::cout << "Value of begin: " << it->first << ":" << it->second << std::endl;
+  // std::cout << "Value of begin: " << it->first << ":" << it->second << std::endl;
   ft::map<int, int>::iterator end = tree.end();
   std::cout << "Value of end: " << end->first << ":" << end->second << std::endl;
 
