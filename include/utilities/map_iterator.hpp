@@ -14,7 +14,9 @@ namespace ft {
     typedef ft::bidirectional_iterator_tag iterator_category;
 
     private:
-      node_pointer             _ptr;
+      node_pointer            _ptr;
+      node_pointer            _sentinel;
+      node_pointer            _max;
 
     public:
       map_iterator() : _ptr(NULL) {}
@@ -40,6 +42,7 @@ namespace ft {
           _ptr = _ptr->right;
           while (_ptr->left)
             _ptr = _ptr->left;
+          std::cout << "Here: " << _ptr->data.first << std::endl;
         }
         else {
           node_pointer tmp = _ptr->parent;
@@ -48,6 +51,7 @@ namespace ft {
             tmp = tmp->parent;
           }
           _ptr = tmp;
+          std::cout << "There: " << _ptr->data.first << std::endl;
         }
         return *this;
       }

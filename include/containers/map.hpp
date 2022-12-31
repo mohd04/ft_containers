@@ -66,7 +66,8 @@ namespace ft
                   const allocator_type& alloc = allocator_type() ) : _comp(comp), _alloc(alloc) {
       _root = NULL;
       _size = 0;
-      _sentinel = _create_node(value_type(), NULL);
+      _sentinel = _create_node(value_type());
+      _root = NULL;
     }
 
     template <class InputIterator>
@@ -85,6 +86,7 @@ namespace ft
     }
 
     ~map() {
+      _delete_node(_sentinel);
       clear();
     }
 
@@ -98,40 +100,29 @@ namespace ft
     }
 
     iterator begin() {
-      node_pointer n = _root;
       if (_size == 0)
-        return (end());
-      if (!n->left && n->right)
-        n = n->right;
-      while (n->left)
-        n = n->left;
-      n->parent = _root;
-      return (iterator(n));
+        return iterator(end());
+      return iterator(_minimum(_root));
     }
 
     const_iterator begin() const {
       if (this->_size == 0)
-        return const_iterator();
-      return const_iterator(_root);
+        return const_iterator(end());
+      node_pointer tmp = _minimum(_root);
+      return const_iterator(tmp);
     }
 
     iterator end() {
-      if (_root == NULL)
+      if (_size == 0)
         return iterator(_sentinel);
-      node_pointer tmp = _root;
-      while (tmp->right != NULL)
-        tmp = tmp->right;
-      tmp = tmp->right = _sentinel;
+      node_pointer tmp = _maximum(_root);
       return iterator(tmp);
     }
 
     const_iterator end() const {
-      if (_root == NULL)
+      if (_size == 0)
         return const_iterator(_sentinel);
-      node_pointer tmp = _root;
-      while (tmp->right != NULL)
-        tmp = tmp->right;
-      tmp = tmp->right = _sentinel;
+      node_pointer tmp = _maximum(_root);
       return const_iterator(tmp);
     }
 
@@ -176,55 +167,19 @@ namespace ft
       return insert(val).first;
     }
 
-    bool inOrder(node_pointer root, key_type key) {
-      if (root != NULL) {
-        inOrder(root->left, key);
-        if (root->data.first == key)
-          return true;
-        inOrder(root->right, key);
-        if (root->data.first == key)
-          return true;
-      }
-      return false;
+    node_pointer search(node_pointer &root, const key_type &key) {
+      // if (root != NULL)
+      //   std::cout << key << "wtf is wrong with you " << root->data.first << std::endl;
+      if (root == NULL || root->data.first == key)
+        return root;
+
+      if (_comp(root->data.first, key)) return search(root->right, key);
+
+      return search(root->left, key);
     }
-
-    void printTree(node_pointer root) {
-      if (root != NULL) {
-        printTree(root->left);
-        std::cout << root->data.first << std::endl;
-        printTree(root->right);
-      }
-    }
-
-    void print2DUtil(node_pointer root, int space) {
-    // Base case
-    if (root == NULL) return;
-
-    // Increase distance between levels
-    space += 10;
-
-    // Process right child first
-    print2DUtil(root->right, space);
-
-    // Print current node after space
-    // count
-    std::cout << std::endl;
-    for (int i = 10; i < space; i++) std::cout << " ";
-    std::cout << root->data.first << "(" << getBalance(root) << ")" << std::endl;
-
-    // Process left child
-    print2DUtil(root->left, space);
-  }
-
-  // Wrapper over print2DUtil()
-  void print2D() {
-    std::cout << "Tree:" << std::endl;
-    // Pass initial space count as 0
-    print2DUtil(_root, 0);
-  }
 
     ft::pair<iterator, bool>   insert(const value_type& value) {
-      if (inOrder(_root, value.first)) {
+      if (search(_root, value.first)) {
         return ft::pair<iterator, bool>(find(value.first), false);
       }
       // printTree(_root);
@@ -343,9 +298,13 @@ namespace ft
     }
 
     private:
-      node_pointer  _create_node(const value_type& val, node_pointer parent) {
+      node_pointer  _create_node(const value_type& val) {
         node_pointer new_node = _node_alloc.allocate(1);
-        _node_alloc.construct(new_node, node_type(val, NULL, NULL, parent));
+        _node_alloc.construct(new_node, node_type(val, NULL, NULL, NULL));
+        new_node->left = NULL;
+        new_node->right = NULL;
+        new_node->parent = NULL;
+        new_node->height = 1;
         return new_node;
       }
 
@@ -378,13 +337,14 @@ namespace ft
           return _rotate_left(node);
         }
 
+        // print2D();
         return node;
       }
 
-      node_pointer    _insert(const value_type& val, node_pointer node) {
+      node_pointer    _insert(const value_type& val, node_pointer &node) {
         if (node == NULL) {
           _size++;
-          return _create_node(val, node);
+          return _create_node(val);
         }
 
         if (_comp(val.first, node->data.first)) {
@@ -474,6 +434,52 @@ namespace ft
         _clear(node->right);
         _node_alloc.destroy(node);
         _node_alloc.deallocate(node, 1);
+      }
+
+      node_pointer  _minimum(node_pointer node) const {
+        if (node == NULL)
+          return NULL;
+        node_pointer tmp = node;
+        while (tmp->left != NULL)
+          tmp = tmp->left;
+        return tmp;
+      }
+
+      node_pointer  _maximum(node_pointer node) const {
+        if (node == NULL)
+          return NULL;
+        node_pointer tmp = node;
+        while (tmp->right != NULL)
+          tmp = tmp->right;
+        return tmp;
+      }
+
+      void print2DUtil(node_pointer root, int space) {
+      // Base case
+      if (root == NULL) return;
+
+      // Increase distance between levels
+      space += 10;
+
+      // Process right child first
+      print2DUtil(root->right, space);
+
+      // Print current node after space
+      // count
+      std::cout << std::endl;
+      for (int i = 10; i < space; i++) std::cout << " ";
+      std::cout << root->data.first << "(" << getBalance(root) << ")" << std::endl;
+        for (int i = 10; i < space; i++) std::cout << " ";
+          if (root->parent)
+            std::cout << "Parent: " << root->parent->data.first << std::endl;
+
+      // Process left child
+      print2DUtil(root->left, space);
+    }
+
+      void print2D() {
+        std::cout << "Tree:" << std::endl;
+        print2DUtil(_root, 0);
       }
   };
 

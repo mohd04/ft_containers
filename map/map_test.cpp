@@ -5,15 +5,17 @@
 void ft_map() {
   ft::map<int, std::string> mp, mp2;
 
-  mp.insert(ft::pair<int, std::string>(42, "lol"));
-  mp.insert(ft::pair<int, std::string>(42, "hello"));
-  mp.insert(ft::pair<int, std::string>(50, "mdr"));
-  mp.insert(ft::pair<int, std::string>(35, "funny"));
-  mp.insert(ft::pair<int, std::string>(45, "bunny"));
-  mp.insert(ft::pair<int, std::string>(21, "fizz"));
-  mp.insert(ft::pair<int, std::string>(38, "buzz"));
+  ft::pair<ft::map<int, std::string>::iterator, bool> ret;
 
-  mp.print2D();
+  ret = mp.insert(ft::pair<int, std::string>(42, "lol"));
+  ret = mp.insert(ft::pair<int, std::string>(42, "hello"));
+  ret = mp.insert(ft::pair<int, std::string>(50, "mdr"));
+  ret = mp.insert(ft::pair<int, std::string>(35, "funny"));
+  ret = mp.insert(ft::pair<int, std::string>(45, "bunny"));
+  ret = mp.insert(ft::pair<int, std::string>(21, "fizz"));
+  ret = mp.insert(ft::pair<int, std::string>(38, "buzz"));
+
+  // mp.print2D();
 
   ft::map<int, std::string>::iterator it = mp.begin();
   std::cout << "begin" << it->first << " " << it->second << std::endl;
@@ -54,7 +56,7 @@ int main()
 {
   ft_map();
 
-  std_map();
+  // std_map();
 
 
 }
