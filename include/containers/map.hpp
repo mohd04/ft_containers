@@ -82,6 +82,7 @@ namespace ft
          const allocator_type& alloc = allocator_type() ) : _comp(comp), _alloc(alloc) {
             _size = 0;
             _root = NULL;
+            _sentinel = _create_node(value_type());
             insert(first, last);
          }
 
@@ -520,10 +521,10 @@ namespace ft
 
   };
 
-  // template <class Key, class T, class Compare, class Alloc>
-  // bool operator==( const ft::map<Key,T,Compare,Alloc>& lhs, const ft::map<Key,T,Compare,Alloc>& rhs ) {
-  //   return (lhs.size() == rhs.size() && std::equal(lhs.begin(), lhs.end(), rhs.begin()));
-  // }
+  template <class Key, class T, class Compare, class Alloc>
+  bool operator==( const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs ) {
+    return (lhs.size() == rhs.size() && ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
+  }
 
   template <class Key, class T, class Compare, class Alloc>
   bool operator!=( const ft::map<Key,T,Compare,Alloc>& lhs, const ft::map<Key,T,Compare,Alloc>& rhs ) {

@@ -17,15 +17,16 @@ void ft_map() {
 
   // mp.print2D();
 
-  ft::map<int, std::string>::iterator it = mp.begin();
-  std::cout << "begin" << it->first << " " << it->second << std::endl;
-  ft::map<int, std::string>::iterator ite = mp.end();
-  std::cout << ite->first << " " << ite->second << std::endl;
+  // ft::map<int, std::string>::iterator it = mp.begin();
+  // std::cout << "begin" << it->first << " " << it->second << std::endl;
+  // ft::map<int, std::string>::iterator ite = mp.end();
+  // std::cout << ite->first << " " << ite->second << std::endl;
 
-  while (it != ite) {
-    std::cout << it->first << " " << it->second << std::endl;
-    it++;
-  }
+  // while (it != ite) {
+  //   std::cout << it->first << " " << it->second << std::endl;
+  //   it++;
+  // }
+	// std::cout << "eq: " << (mp == mp2) << " | ne: " << (mp != mp2) << std::endl;
   std::cout << "----------------" << std::endl;
 }
 

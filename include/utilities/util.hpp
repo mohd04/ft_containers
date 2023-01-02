@@ -9,5 +9,6 @@
 # include "pair.hpp"
 # include "reverse_iterator.hpp"
 # include "Node.hpp"
+# include "equal.hpp"
 
 #endif
