@@ -62,6 +62,12 @@ namespace ft
 
     public:
 
+
+    void print2D() {
+      std::cout << "Tree:" << std::endl;
+      print2DUtil(_root, 0);
+    }
+
     explicit map( const key_compare& comp = key_compare(),
                   const allocator_type& alloc = allocator_type() ) : _comp(comp), _alloc(alloc) {
       _root = NULL;
@@ -102,28 +108,31 @@ namespace ft
     iterator begin() {
       if (_size == 0)
         return iterator(end());
-      return iterator(_minimum(_root));
+      node_pointer min = _minimum(_root);
+      node_pointer max = _maximum(_root);
+      return iterator(min, _sentinel, max);
     }
 
     const_iterator begin() const {
       if (this->_size == 0)
         return const_iterator(end());
-      node_pointer tmp = _minimum(_root);
-      return const_iterator(tmp);
+      node_pointer min = _minimum(_root);
+      node_pointer max = _maximum(_root);
+      return const_iterator(min, _sentinel, max);
     }
 
     iterator end() {
       if (_size == 0)
         return iterator(_sentinel);
-      node_pointer tmp = _maximum(_root);
-      return iterator(tmp);
+      node_pointer max = _maximum(_root);
+      return iterator(_sentinel, _sentinel, max);
     }
 
     const_iterator end() const {
       if (_size == 0)
         return const_iterator(_sentinel);
-      node_pointer tmp = _maximum(_root);
-      return const_iterator(tmp);
+      node_pointer max = _maximum(_root);
+      return const_iterator(_sentinel, _sentinel, max);
     }
 
     reverse_iterator rbegin() {
@@ -151,7 +160,7 @@ namespace ft
     }
 
     size_type max_size() const {
-      return _alloc.max_size();
+      return (_alloc.max_size() / 2);
     }
 
     T& operator[] (const key_type& k) {
@@ -168,8 +177,6 @@ namespace ft
     }
 
     node_pointer search(node_pointer &root, const key_type &key) {
-      // if (root != NULL)
-      //   std::cout << key << "wtf is wrong with you " << root->data.first << std::endl;
       if (root == NULL || root->data.first == key)
         return root;
 
@@ -182,7 +189,6 @@ namespace ft
       if (search(_root, value.first)) {
         return ft::pair<iterator, bool>(find(value.first), false);
       }
-      // printTree(_root);
       _root = _insert(value, _root);
       return ft::pair<iterator, bool>(find(value.first), true);
     }
@@ -241,8 +247,8 @@ namespace ft
       return end();
     }
 
-    std::pair<iterator, iterator> equal_range(const key_type& k) {
-      return std::pair<iterator, iterator>(lower_bound(k), upper_bound(k));
+    ft::pair<iterator, iterator> equal_range(const key_type& k) {
+      return ft::pair<iterator, iterator>(lower_bound(k), upper_bound(k));
     }
 
     std::pair<const_iterator, const_iterator> equal_range(const key_type& k) const {
@@ -412,6 +418,12 @@ namespace ft
 
         node->height = std::max(height(node->left), height(node->right)) + 1;
         right_tree->height = std::max(height(right_tree->left), height(right_tree->right)) + 1;
+
+        right_tree->parent = node->parent;
+        node->parent = right_tree;
+        if (N2)
+          N2->parent = node;
+
         return right_tree;
       }
 
@@ -423,6 +435,11 @@ namespace ft
 
         node->height = std::max(height(node->left), height(node->right)) + 1;
         left_tree->height = std::max(height(left_tree->left), height(left_tree->right)) + 1;
+
+        left_tree->parent = node->parent;
+        node->parent = left_tree;
+        if (N2)
+          N2->parent = node;
         return left_tree;
       }
 
@@ -477,10 +494,6 @@ namespace ft
       print2DUtil(root->left, space);
     }
 
-      void print2D() {
-        std::cout << "Tree:" << std::endl;
-        print2DUtil(_root, 0);
-      }
   };
 
   // template <class Key, class T, class Compare, class Alloc>

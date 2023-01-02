@@ -20,7 +20,8 @@ namespace ft {
 
     public:
       map_iterator() : _ptr(NULL) {}
-      map_iterator(node_pointer ptr) : _ptr(ptr) {}
+      map_iterator(node_pointer ptr) : _ptr(ptr), _sentinel(NULL), _max(NULL) {}
+      map_iterator(node_pointer ptr, node_pointer sentinel, node_pointer max) : _ptr(ptr), _sentinel(sentinel), _max(max) {}
       map_iterator(map_iterator const &other) : _ptr(other._ptr) { *this = other; }
       virtual ~map_iterator() {}
 
@@ -38,11 +39,16 @@ namespace ft {
       reference operator*() const { return _ptr->data; }
 
       map_iterator& operator++() {
-        if (_ptr->right) {
+        if (_ptr == _max) {
+          _ptr = _sentinel;
+        }
+        else if (_ptr == _sentinel) {
+          _ptr = _max;
+        }
+        else if (_ptr->right) {
           _ptr = _ptr->right;
           while (_ptr->left)
             _ptr = _ptr->left;
-          std::cout << "Here: " << _ptr->data.first << std::endl;
         }
         else {
           node_pointer tmp = _ptr->parent;
@@ -51,7 +57,6 @@ namespace ft {
             tmp = tmp->parent;
           }
           _ptr = tmp;
-          std::cout << "There: " << _ptr->data.first << std::endl;
         }
         return *this;
       }
