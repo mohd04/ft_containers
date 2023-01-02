@@ -88,11 +88,13 @@ namespace ft
     map( const map& x ) : _comp(x._comp), _alloc(x._alloc) {
       _root = NULL;
       _size = 0;
+      _sentinel = _create_node(value_type());
       *this = x;
     }
 
     ~map() {
-      _delete_node(_sentinel);
+      if (_sentinel)
+        _delete_node(_sentinel);
       clear();
     }
 
@@ -201,6 +203,28 @@ namespace ft
       }
     }
 
+    void erase(iterator position) {
+      if (position == end())
+        return;
+      _root = _delete(_root, position->first);
+      _size--;
+    }
+
+    void erase(iterator first, iterator last) {
+      while (first != last) {
+        erase(first);
+        first++;
+      }
+    }
+
+    size_type erase(const key_type& k) {
+      if (find(k) == end())
+        return 0;
+      std::cout << "Deleting: " << k << std::endl;
+      _root = _delete(_root, k);
+      return 1;
+    }
+
     void clear() {
       _clear(_root);
       _root = NULL;
@@ -251,8 +275,8 @@ namespace ft
       return ft::pair<iterator, iterator>(lower_bound(k), upper_bound(k));
     }
 
-    std::pair<const_iterator, const_iterator> equal_range(const key_type& k) const {
-      return std::pair<const_iterator, const_iterator>(lower_bound(k), upper_bound(k));
+    ft::pair<const_iterator, const_iterator> equal_range(const key_type& k) const {
+      return ft::pair<const_iterator, const_iterator>(lower_bound(k), upper_bound(k));
     }
 
     iterator lower_bound(const key_type& k) {
@@ -324,21 +348,21 @@ namespace ft
         return height(N->left) - height(N->right);
       }
 
-      node_pointer    _balance(node_pointer node, const value_type& val) {
+      node_pointer    _balance(node_pointer node, const key_type& val) {
         int bal = height(node->left) - height(node->right);
 
-        if (bal > LH && _comp(val.first, node->left->data.first))
+        if (bal > LH && _comp(val, node->left->data.first))
           return _rotate_right(node);
 
-        if (bal < RH && _comp(node->right->data.first, val.first))
+        if (bal < RH && _comp(node->right->data.first, val))
           return _rotate_left(node);
 
-        if (bal > LH && _comp(node->left->data.first, val.first)) {
+        if (bal > LH && _comp(node->left->data.first, val)) {
           node->left = _rotate_left(node->left);
           return _rotate_right(node);
         }
 
-        if (bal < RH && _comp(val.first, node->right->data.first)) {
+        if (bal < RH && _comp(val, node->right->data.first)) {
           node->right = _rotate_right(node->right);
           return _rotate_left(node);
         }
@@ -366,7 +390,7 @@ namespace ft
 
         node->height = 1 + std::max(height(node->left), height(node->right));
 
-        return _balance(node, val);
+        return _balance(node, val.first);
       }
 
       node_pointer  _delete_node(node_pointer node) {
@@ -379,9 +403,9 @@ namespace ft
         if (node == NULL)
           return node;
 
-        if (_comp(val.first, node->data.first))
+        if (_comp(val, node->data.first))
           node->left = _delete(node->left, val);
-        else if (_comp(node->data.first, val.first))
+        else if (_comp(node->data.first, val))
           node->right = _delete(node->right, val);
         else {
           if ((node->left == NULL) || (node->right == NULL)) {
@@ -395,7 +419,7 @@ namespace ft
             _delete_node(temp);
           }
           else {
-            node_pointer temp = _min(node->right);
+            node_pointer temp = _minimum(node->right);
             node->data = temp->data;
             node->right = _delete(node->right, temp->data.first);
           }

@@ -30,6 +30,8 @@ namespace ft {
       map_iterator& operator=(map_iterator const &other) {
         if (this != &other) {
           _ptr = other._ptr;
+          _sentinel = other._sentinel;
+          _max = other._max;
         }
         return *this;
       }
@@ -68,7 +70,10 @@ namespace ft {
       }
 
       map_iterator& operator--() {
-        if (_ptr->left) {
+        if (_ptr == _sentinel) {
+          _ptr = _max;
+        }
+        else if (_ptr->left) {
           _ptr = _ptr->left;
           while (_ptr->right)
             _ptr = _ptr->right;
