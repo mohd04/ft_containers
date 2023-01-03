@@ -2,6 +2,7 @@
 # define MAPP_HPP
 
 # include <iostream>
+#include <typeinfo>
 # include "../utilities/util.hpp"
 # include "../utilities/map_iterator.hpp"
 
@@ -14,7 +15,7 @@ namespace ft
   template < class Key,
               class T,
               class Compare = std::less<Key>,
-              class Alloc = std::allocator<std::pair<const Key,T> > >
+              class Alloc = std::allocator<ft::pair<const Key,T> > >
   class map {
     public:
 
@@ -26,8 +27,8 @@ namespace ft
       class value_compare : public std::binary_function<value_type, value_type, bool> {
         protected:
           Compare comp;
-          value_compare (Compare c) : comp(c) {}
         public:
+          value_compare (Compare c) : comp(c) {}
           typedef bool result_type;
           typedef value_type first_argument_type;
           typedef value_type second_argument_type;
@@ -208,6 +209,7 @@ namespace ft
       if (position == end())
         return;
       _root = _delete(_root, position->first);
+      _update_parent(_root);
       _size--;
     }
 
@@ -221,8 +223,7 @@ namespace ft
     size_type erase(const key_type& k) {
       if (find(k) == end())
         return 0;
-      std::cout << "Deleting: " << k << std::endl;
-      _root = _delete(_root, k);
+      erase(find(k));
       return 1;
     }
 
@@ -349,6 +350,29 @@ namespace ft
         return height(N->left) - height(N->right);
       }
 
+      node_pointer _balance(node_pointer node) {
+        int balance = getBalance(node);
+
+        // Left Left Case
+        if (balance > 1 && getBalance(node->left) >= 0) return _rotate_right(node);
+
+        // Left Right Case
+        if (balance > 1 && getBalance(node->left) < 0) {
+          node->left = _rotate_left(node->left);
+          return _rotate_right(node);
+        }
+
+        // Right Right Case
+        if (balance < -1 && getBalance(node->right) <= 0) return _rotate_left(node);
+
+        // Right Left Case
+        if (balance < -1 && getBalance(node->right) > 0) {
+          node->right = _rotate_right(node->right);
+          return _rotate_left(node);
+        }
+        return node;
+      }
+
       node_pointer    _balance(node_pointer node, const key_type& val) {
         int bal = height(node->left) - height(node->right);
 
@@ -409,29 +433,34 @@ namespace ft
         else if (_comp(node->data.first, val))
           node->right = _delete(node->right, val);
         else {
-          if ((node->left == NULL) || (node->right == NULL)) {
-            node_pointer temp = node->left ? node->left : node->right;
-            if (temp == NULL) {
-              temp = node;
-              node = NULL;
+            if (!node->left && !node->right) {
+              return node = _delete_node(node);
             }
-            else
-              *node = *temp;
-            _delete_node(temp);
+            else if (!node->left && node->right) {
+              node_pointer new_node = node->right;
+              node = _delete_node(node);
+              return new_node;
+            }
+            else if (node->left && !node->right) {
+              node_pointer new_node = node->left;
+              node = _delete_node(node);
+              return new_node;
+            }
+            else {
+              node_pointer temp = _minimum(node->right);
+
+              _alloc.destroy(&node->data);
+              _alloc.construct(&node->data, temp->data);
+              node->right = _delete(node->right, temp->data.first);
+            }
           }
-          else {
-            node_pointer temp = _minimum(node->right);
-            node->data = temp->data;
-            node->right = _delete(node->right, temp->data.first);
-          }
-        }
 
         if (node == NULL)
           return node;
 
         node->height = 1 + std::max(height(node->left), height(node->right));
 
-        return _balance(node, val);
+        return _balance(node);
       }
 
       node_pointer  _rotate_left(node_pointer &node) {
@@ -466,6 +495,20 @@ namespace ft
         if (N2)
           N2->parent = node;
         return left_tree;
+      }
+
+      void _update_parent(node_pointer node) {
+        if (node == NULL) return;
+
+        // Update parent of left child
+        if (node->left) node->left->parent = node;
+
+        // Update parent of right child
+        if (node->right) node->right->parent = node;
+
+        // Recursively update parent of children
+        _update_parent(node->left);
+        _update_parent(node->right);
       }
 
       void  _clear(node_pointer &node) {

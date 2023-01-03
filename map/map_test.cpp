@@ -19,6 +19,12 @@ void ft_map() {
 
   ft::map<int, std::string>::const_iterator it = mp.begin();
   std::cout << "begin" << it->first << " " << it->second << std::endl;
+  std::cout << "Size: " << mp.size() << std::endl;
+  mp.erase(50);
+  mp.erase(35);
+  mp.erase(38);
+  mp.print2D();
+  std::cout << "Size: " << mp.size() << std::endl;
   // ft::map<int, std::string>::iterator ite = mp.end();
   // std::cout << ite->first << " " << ite->second << std::endl;
 
