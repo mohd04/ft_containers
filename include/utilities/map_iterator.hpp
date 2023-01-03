@@ -7,11 +7,12 @@ namespace ft {
   template<typename T, typename node_pointer>
   class map_iterator {
 
-    typedef T value_type;
-    typedef value_type* pointer;
-    typedef value_type& reference;
-    typedef std::ptrdiff_t difference_type;
-    typedef ft::bidirectional_iterator_tag iterator_category;
+    public:
+      typedef T value_type;
+      typedef value_type* pointer;
+      typedef value_type& reference;
+      typedef std::ptrdiff_t difference_type;
+      typedef ft::bidirectional_iterator_tag iterator_category;
 
     private:
       node_pointer            _ptr;
