@@ -36,7 +36,7 @@ namespace ft {
         return *this;
       }
 
-      T* operator->() const { return &(_ptr->data); }
+      pointer operator->() const { return &(_ptr->data); }
 
       reference operator*() const { return _ptr->data; }
 
@@ -93,6 +93,10 @@ namespace ft {
         map_iterator tmp(*this);
         --(*this);
         return tmp;
+      }
+
+      operator map_iterator<const value_type, node_pointer>() const {
+        return map_iterator<const value_type, node_pointer>(_ptr, _sentinel, _max);
       }
 
       friend bool operator==(map_iterator const &lhs, map_iterator const &rhs) {
