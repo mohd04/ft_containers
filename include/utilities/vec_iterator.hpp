@@ -65,29 +65,29 @@ namespace ft
       vectorType*                        getPtr() const { return (m_ptr); }
       const vectorType*                getConstPtr() const { return (m_ptr); }
 
-      template <class Iterator1, class Iterator2>
-      friend bool operator== ( const Iterator1 & lhs, const Iterator2 & rhs);
+      // template <class Iterator1, class Iterator2>
+      // friend bool operator== ( const Iterator1 & lhs, const Iterator2 & rhs);
 
-      template <class Iterator1, class Iterator2>
-      friend bool operator!= ( const Iterator1 & lhs, const Iterator2 & rhs);
+      // template <class Iterator1, class Iterator2>
+      // friend bool operator!= ( const Iterator1 & lhs, const Iterator2 & rhs);
 
-      template <class Iterator1, class Iterator2>
-      friend bool operator< ( const Iterator1 & lhs, const Iterator2 & rhs);
+      // template <class Iterator1, class Iterator2>
+      // friend bool operator< ( const Iterator1 & lhs, const Iterator2 & rhs);
 
-      template <class Iterator1, class Iterator2>
-      friend bool operator<= ( const Iterator1 & lhs, const Iterator2 & rhs);
+      // template <class Iterator1, class Iterator2>
+      // friend bool operator<= ( const Iterator1 & lhs, const Iterator2 & rhs);
 
-      template <class Iterator1, class Iterator2>
-      friend bool operator> ( const Iterator1 & lhs, const Iterator2 & rhs);
+      // template <class Iterator1, class Iterator2>
+      // friend bool operator> ( const Iterator1 & lhs, const Iterator2 & rhs);
 
-      template <class Iterator1, class Iterator2>
-      friend bool operator>= ( const Iterator1 & lhs, const Iterator2 & rhs);
+      // template <class Iterator1, class Iterator2>
+      // friend bool operator>= ( const Iterator1 & lhs, const Iterator2 & rhs);
 
-      template <class Iterator>
-      friend Iterator operator+ (typename Iterator::difference_type n, const Iterator& it);
+      // template <class Iterator>
+      // friend Iterator operator+ (typename Iterator::difference_type n, const Iterator& it);
 
-      template <class Iterator1, class Iterator2>
-      friend typename Iterator2::difference_type operator- (const Iterator1& lhs, const Iterator2& rhs);
+      // template <class Iterator1, class Iterator2>
+      // friend typename Iterator2::difference_type operator- (const Iterator1& lhs, const Iterator2& rhs);
 
         protected:
             pointer            m_ptr;

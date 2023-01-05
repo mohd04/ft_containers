@@ -168,8 +168,6 @@ namespace ft
         _delete_all(*this);
         throw std::length_error("Vector reserve error");
       }
-      if (n <= _capacity)
-        return ;
 
       pointer tmp = _alloc.allocate(n);
       for (size_type i = 0; i < _end; i++)
