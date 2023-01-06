@@ -1,13 +1,17 @@
 #include <iostream>
 #include <memory>
-#include "../include/containers/vector.hpp"
+// #include "../include/containers/vector.hpp"
+#include "../../lowke/vector/vector.hpp"
 #include <vector>
+#define TESTED_NAMESPACE ft
+#define TESTED_TYPE int
 
 int main(void)
 {
-    ft::vector <int> mine(5, 5);
-
-    std::cout << "mine: " << mine[1] << std::endl;
+	const int size = 5;
+	TESTED_NAMESPACE::vector<TESTED_TYPE> vct(size);
+	TESTED_NAMESPACE::vector<TESTED_TYPE>::iterator it = vct.begin();
+	TESTED_NAMESPACE::vector<TESTED_TYPE>::const_iterator ite = vct.begin();
 
     return (0);
 }

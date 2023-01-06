@@ -1,101 +1,115 @@
-#ifndef VEC_ITERATOR_HPP
-#define VEC_ITERATOR_HPP
+#ifndef vector_iterator_HPP
+#define vector_iterator_HPP
 
-#include <iostream>
-#include <memory>
-#include <iterator>
-#include <cstddef>
 #include "iterator_traits.hpp"
 
-namespace ft
-{
-    template<typename vectorType>
-    class vectorIterator : public std::iterator<std::random_access_iterator_tag,
-                                                    vectorType,
-                                                    ptrdiff_t,
-                                                    vectorType*,
-                                                    vectorType&>
-    {
-    public:
-      typedef typename std::random_access_iterator_tag        iterator_category;
-      typedef vectorType                                        value_type;
-      typedef typename std::ptrdiff_t                            difference_type;
-      typedef vectorType*                                        pointer;
-      typedef vectorType&                                        reference;
+namespace ft {
 
-      vectorIterator() {this->m_ptr = NULL;}
-      vectorIterator(vectorType* ptr = nullptr) { m_ptr = ptr; }
-      vectorIterator(const vectorIterator<vectorType>& rawIterator) {*this = rawIterator;}
-      ~vectorIterator() {}
+template <class T>
+class vector_iterator : public ft::iterator<std::random_access_iterator_tag, T> {
 
-      pointer                   base() const { return this->m_ptr; }
+  public:
+    typedef ft::iterator<std::random_access_iterator_tag, T>    traits_type;
+    typedef typename traits_type::value_type                    value_type;
+    typedef typename traits_type::pointer                       pointer;
+    typedef typename traits_type::reference                     reference;
+    typedef typename traits_type::difference_type               difference_type;
+    typedef typename traits_type::iterator_category             iterator_category;
 
-      vectorIterator<vectorType>&        operator=(const vectorIterator<vectorType>& rawIterator){
-          if (this != &rawIterator)
-              m_ptr = rawIterator.m_ptr;
-          return (*this);
+  private:
+    pointer  _ptr;
+
+  public:
+    vector_iterator() : _ptr() {}
+
+    vector_iterator(pointer current) : _ptr(current) {}
+
+    template <class U>
+    vector_iterator(const vector_iterator<U> &value) : _ptr(value.base()) {}
+
+    ~vector_iterator() {}
+
+    vector_iterator &operator=(const vector_iterator& value) {
+      if (this != &value) {
+        _ptr = value._ptr;
       }
-      vectorIterator<vectorType>&        operator=(vectorType* ptr) { m_ptr = ptr; return (*this); }
+      return *this;
+    }
 
-      operator                            bool() const
-      {
-          if (m_ptr)
-              return (true);
-          else
-              return (false);
-      }
+    reference operator*() const { return *_ptr; }
 
-      vectorIterator<vectorType>&        operator+=(const ptrdiff_t& movement) { m_ptr += movement; return (*this); }
-      vectorIterator<vectorType>&        operator-=(const ptrdiff_t& movement) { m_ptr -= movement; return (*this); }
-      vectorIterator<vectorType>        operator++() { ++m_ptr; return (*this); }
-      vectorIterator<vectorType>        operator--() { --m_ptr; return (*this); }
-      vectorIterator<vectorType>         operator++(int) {vectorIterator    temp(*this); ++m_ptr; return (temp); }
-      vectorIterator<vectorType>        operator--(int) {vectorIterator    temp(*this); --m_ptr; return (temp); }
-      vectorIterator<vectorType>&        operator+(const ptrdiff_t& movement) { vectorType* oldPtr = m_ptr; m_ptr+=movement; vectorIterator tmp(*this); m_ptr = oldPtr; return (tmp); }
-      vectorIterator<vectorType>&        operator-(const ptrdiff_t& movement) { vectorType* oldPtr = m_ptr; m_ptr-=movement; vectorIterator tmp(*this); m_ptr = oldPtr; return (tmp); }
+    pointer operator->() const { return _ptr; }
 
-      reference                 operator [] (difference_type const & n) { return this->m_ptr[n]; }
+    pointer base() const { return _ptr; }
 
-      ptrdiff_t                        operator-(const vectorIterator<vectorType>& rawIterator) { return (std::distance(rawIterator.getPtr(), this->getPtr())); }
+    reference operator[](difference_type n) const { return _ptr[n]; }
 
-      vectorType&                        operator*() { return (*m_ptr); }
-      const vectorType&                operator*() const { return (*m_ptr); }
-      vectorType*                        operator->() { return (std::addressof(*m_ptr)); }
+    vector_iterator operator+(difference_type n) const { return vector_iterator(_ptr + n); }
 
-      vectorType*                        getPtr() const { return (m_ptr); }
-      const vectorType*                getConstPtr() const { return (m_ptr); }
+    vector_iterator operator-(difference_type n) const { return vector_iterator(_ptr - n); }
 
-      // template <class Iterator1, class Iterator2>
-      // friend bool operator== ( const Iterator1 & lhs, const Iterator2 & rhs);
+    vector_iterator &operator++() { _ptr++; return *this; }
 
-      // template <class Iterator1, class Iterator2>
-      // friend bool operator!= ( const Iterator1 & lhs, const Iterator2 & rhs);
+    vector_iterator operator++(int) { vector_iterator temp = *this; ++(*this); return temp; }
 
-      // template <class Iterator1, class Iterator2>
-      // friend bool operator< ( const Iterator1 & lhs, const Iterator2 & rhs);
+    vector_iterator &operator--() { _ptr--; return *this; }
 
-      // template <class Iterator1, class Iterator2>
-      // friend bool operator<= ( const Iterator1 & lhs, const Iterator2 & rhs);
+    vector_iterator operator--(int) { vector_iterator temp = *this; --(*this); return temp; }
 
-      // template <class Iterator1, class Iterator2>
-      // friend bool operator> ( const Iterator1 & lhs, const Iterator2 & rhs);
+    vector_iterator &operator+=(difference_type n) { _ptr += n; return *this; }
 
-      // template <class Iterator1, class Iterator2>
-      // friend bool operator>= ( const Iterator1 & lhs, const Iterator2 & rhs);
+    vector_iterator &operator-=(difference_type n) { _ptr -= n; return *this; }
 
-      // template <class Iterator>
-      // friend Iterator operator+ (typename Iterator::difference_type n, const Iterator& it);
+};
 
-      // template <class Iterator1, class Iterator2>
-      // friend typename Iterator2::difference_type operator- (const Iterator1& lhs, const Iterator2& rhs);
-
-        protected:
-            pointer            m_ptr;
-            int                index;
-    };
-
-
+template <class Iter1, class Iter2>
+bool operator==(const vector_iterator<Iter1> &lhs, const vector_iterator<Iter2> &rhs) {
+  return lhs.base() == rhs.base();
 }
 
+template <class Iter1, class Iter2>
+bool operator!=(const vector_iterator<Iter1> &lhs, const vector_iterator<Iter2> &rhs) {
+  return lhs.base() != rhs.base();
+}
+
+template <class Iter1, class Iter2>
+bool operator<(const vector_iterator<Iter1> &lhs, const vector_iterator<Iter2> &rhs) {
+  return lhs.base() < rhs.base();
+}
+
+template <class Iter1, class Iter2>
+bool operator<=(const vector_iterator<Iter1> &lhs, const vector_iterator<Iter2> &rhs) {
+  return lhs.base() <= rhs.base();
+}
+
+template <class Iter1, class Iter2>
+bool operator>(const vector_iterator<Iter1> &lhs, const vector_iterator<Iter2> &rhs) {
+  return lhs.base() > rhs.base();
+}
+
+template <class Iter1, class Iter2>
+bool operator>=(const vector_iterator<Iter1> &lhs, const vector_iterator<Iter2> &rhs) {
+  return lhs.base() >= rhs.base();
+}
+
+template <class Iterator>
+typename vector_iterator<Iterator>::difference_type
+operator-(const vector_iterator<Iterator> &lhs, const vector_iterator<Iterator> &rhs) {
+  return lhs.base() - rhs.base();
+}
+
+template <class Iterator, class I2>
+typename vector_iterator<Iterator>::difference_type
+operator-(const vector_iterator<Iterator> &lhs, const vector_iterator<I2> &rhs) {
+  return lhs.base() - rhs.base();
+}
+
+template <class Iterator>
+vector_iterator<Iterator>
+operator+(typename vector_iterator<Iterator>::difference_type n, const vector_iterator<Iterator> &it) {
+  return vector_iterator<Iterator>(it.base() + n);
+}
+
+}    // namespace ft
 
 #endif

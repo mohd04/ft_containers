@@ -31,6 +31,16 @@ namespace ft {
     typedef T&                                  reference;
     typedef random_access_iterator_tag          iterator_category;
   };
+
+  template <class Category, class T, class Distance = std::ptrdiff_t,
+          class Pointer = T*, class Reference = T&>
+  struct iterator {
+    typedef T            value_type;
+    typedef Pointer      pointer;
+    typedef Reference    reference;
+    typedef Distance     difference_type;
+    typedef Category     iterator_category;
+  };
 }
 
 #endif
