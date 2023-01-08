@@ -67,8 +67,11 @@ namespace ft
     };
 
     ~vector() {
-      if (_begin)
+      if (_begin) {
         clear();
+        _alloc.deallocate(_begin, _capacity);
+        _capacity = 0;
+      }
     };
 
     vector& operator=(vector const & x) {
@@ -180,17 +183,19 @@ namespace ft
     }
 
     void    reserve(size_type n) {
-      if (n > max_size()) {
-        _delete_all(*this);
+      if (n > max_size())
         throw std::length_error("Vector reserve error");
-      }
+      else if (_capacity < n) {
+        pointer tmp = _alloc.allocate(n);
+        size_type s = _end;
+        for (size_type i = 0; i < _end; i++)
+          _alloc.construct(tmp + i, _begin[i]);
+        this->~vector();
 
-      pointer tmp = _alloc.allocate(n);
-      for (size_type i = 0; i < _end; i++)
-        _alloc.construct(tmp + i, _begin[i]);
-      _delete_all(*this);
-      _begin = tmp;
-      _capacity = n;
+        _begin = tmp;
+        _capacity = n;
+        _end = s;
+      }
     }
 
     void clear() {
@@ -204,7 +209,7 @@ namespace ft
       if (n > max_size() - size())
         throw std::length_error("Vector insert error");
       if (n > _capacity - size())
-        reserve(_capacity * 2);
+        reserve(std::max(_capacity *2, _end + n));
       for (size_type i = size(); i > pos; i--)
         _begin[i + n - 1] = _begin[i - 1];
       for (size_type i = 0; i < n; i++)
@@ -224,11 +229,11 @@ namespace ft
       if (n > max_size() - size())
         throw std::length_error("Vector insert error");
       if (n > _capacity - size())
-        reserve(_capacity * 2);
+        reserve(std::max(_capacity *2, _end + n));
       for (size_type i = size(); i > pos; i--)
         _begin[i + n - 1] = _begin[i - 1];
       for (size_type i = 0; i < n; i++)
-        _alloc.construct(_begin + pos + i, *(first + i));
+        _alloc.construct(_begin + pos + i, *(first++));
       _end += n;
     }
 
@@ -253,7 +258,9 @@ namespace ft
     }
 
     void push_back(const value_type& val) {
-      if (_end == _capacity)
+      if (!_capacity)
+        reserve(1);
+      else if (_end == _capacity)
         reserve(_capacity * 2);
       _alloc.construct(_begin + _end, val);
       _end++;
