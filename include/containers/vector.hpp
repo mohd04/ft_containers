@@ -354,13 +354,6 @@ namespace ft
         _alloc.construct(&_begin[i], val);
     }
 
-    void _delete_all(vector &v) {
-      if (v._capacity) {
-        for (iterator it = v.begin(); it != v.end(); it++)
-          v._alloc.destroy(it.base());
-        v._alloc.deallocate(v.begin().base(), v.capacity());
-      }
-    }
   };
 
   template <class T, class Alloc>
