@@ -63,12 +63,6 @@ namespace ft
 
     public:
 
-
-    void print2D() {
-      std::cout << "Tree:" << std::endl;
-      print2DUtil(_root, 0);
-    }
-
     explicit map( const key_compare& comp = key_compare(),
                   const allocator_type& alloc = allocator_type() ) : _comp(comp), _alloc(alloc) {
       _root = NULL;
@@ -194,15 +188,6 @@ namespace ft
     iterator    insert(iterator position, const value_type& val) {
       (void)position;
       return insert(val).first;
-    }
-
-    node_pointer search(node_pointer &root, const key_type &key) {
-      if (root == NULL || root->data.first == key)
-        return root;
-
-      if (_comp(root->data.first, key)) return search(root->right, key);
-
-      return search(root->left, key);
     }
 
     ft::pair<iterator, bool>   insert(const value_type& value) {
@@ -584,6 +569,20 @@ namespace ft
 
       // Process left child
       print2DUtil(root->left, space);
+    }
+
+    void print2D() {
+      std::cout << "Tree:" << std::endl;
+      print2DUtil(_root, 0);
+    }
+
+    node_pointer search(node_pointer &root, const key_type &key) {
+      if (root == NULL || root->data.first == key)
+        return root;
+
+      if (_comp(root->data.first, key)) return search(root->right, key);
+
+      return search(root->left, key);
     }
 
   };
