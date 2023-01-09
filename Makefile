@@ -1,37 +1,93 @@
-NAME = containers
-NAME_VEC = vec
-NAME_MAP = mapp
+VEC_SRCS = vec_test.cpp
 
-CPP = c++ -g
+MAP_SRCS = map_test.cpp
 
-CPPFLAGS = -Wall -Werror -Wextra -std=c++98
+STACK_SRCS = stack_test.cpp
 
-INCL_MAP = -I $(addprefix ./map/, avlTree.hpp)
-INCL_VEC = -I $(addprefix ./vector/, vector.hpp)
+VEC_NAME = $(addprefix $(VEC_DIR), ${VEC_SRCS})
 
-SRCS_MAP = $(addprefix ./map/, map_test.cpp)
-SRCS_VEC = $(addprefix ./vector/, vec_test.cpp)
+MAP_NAME = $(addprefix $(MAP_DIR), ${MAP_SRCS})
 
-OBJS_MAP = ${SRCS_MAP:.cpp=.o}
-OBJS_VEC = ${SRCS_VEC:.cpp=.o}
+STACK_NAME = $(addprefix $(STACK_DIR), ${STACK_SRCS})
 
-RM = rm -f
+VEC_DIR = vector/
 
-$(NAME): $(OBJS_MAP) ${OBJS_VEC}
-	$(CPP) $(CFLAGS) $(OBJS_MAP) $(OBJS_VEC) -o $(NAME)
+MAP_DIR = map/
 
-all: $(NAME)
+STACK_DIR = stack/
 
-vector: $(OBJS_VEC)
-	$(CPP) $(CFLAGS) $(OBJS_VEC) -o $(NAME_VEC)
+VEC_OBJ_NAME = $(addprefix $(OBJ_DIR), ${VEC_NAME:%.cpp=%.o})
 
-map: $(OBJS_MAP)
-	$(CPP) $(CFLAGS) $(OBJS_MAP) -o $(NAME_MAP)
+MAP_OBJ_NAME = $(addprefix $(OBJ_DIR), ${MAP_NAME:%.cpp=%.o})
 
-clean:
-		$(RM) $(OBJS_MAP) $(OBJS_VEC)
+STACK_OBJ_NAME = $(addprefix $(OBJ_DIR), ${STACK_NAME:%.cpp=%.o})
 
-fclean: clean
-		$(RM) $(NAME) $(NAME_MAP) $(NAME_VEC)
+OBJ_DIR = objs/
 
-re: fclean all
+CXX = c++ -g
+
+CXX_FLAGS = -Wall -Wextra -Werror -std=c++98
+
+VNAME = ft_vec
+
+MNAME = ft_map
+
+SNAME = ft_stack
+
+NAME = ft
+
+all:  $(NAME)
+
+$(NAME) : objs_tree $(VNAME) $(MNAME) $(SNAME)
+
+$(VNAME): objs_tree $(VEC_OBJ_NAME)
+	$(CXX) ${CXX_FLAGS} $(VEC_OBJ_NAME) -o $(VNAME)
+
+$(MNAME): objs_tree $(MAP_OBJ_NAME)
+	$(CXX) ${CXX_FLAGS} $(MAP_OBJ_NAME) -o $(MNAME)
+
+$(SNAME): objs_tree $(STACK_OBJ_NAME)
+	$(CXX) ${CXX_FLAGS} $(STACK_OBJ_NAME) -o $(SNAME)
+
+objs_tree:
+	mkdir -p $(OBJ_DIR)
+	mkdir -p $(OBJ_DIR)$(VEC_DIR)
+	mkdir -p $(OBJ_DIR)$(MAP_DIR)
+	mkdir -p $(OBJ_DIR)$(STACK_DIR)
+
+$(OBJ_DIR)$(VEC_DIR)%.o : $(SRC_DIR)$(VEC_DIR)%.cpp
+	$(CXX) ${CXX_FLAGS} -c $< -o $@
+
+$(OBJ_DIR)$(MAP_DIR)%.o : $(SRC_DIR)$(MAP_DIR)%.cpp
+	$(CXX) ${CXX_FLAGS} -c $< -o $@
+
+$(OBJ_DIR)$(STACK_DIR)%.o : $(SRC_DIR)$(STACK_DIR)%.cpp
+	$(CXX) ${CXX_FLAGS} -c $< -o $@
+
+clean_o_files:
+	rm -rf $(OBJ_DIR)
+
+clean_vexec_file:
+	rm -rf $(VNAME)
+
+clean_mexec_file:
+	rm -rf $(MNAME)
+
+clean_sexec_file:
+	rm -rf $(SNAME)
+
+clean_exec_file: clean_vexec_file clean_mexec_file clean_sexec_file
+
+clean: n_o_files
+
+fclean: clean_o_files clean_exec_file
+
+rev: clean_o_files clean_vexec_file $(VNAME)
+
+rem: clean_o_files clean_mexec_file $(MNAME)
+
+res:  clean_o_files clean_sexec_file $(SNAME)
+
+re: clean_o_files clean_exec_file $(NAME)
+
+.PHONY: all clean fclean re

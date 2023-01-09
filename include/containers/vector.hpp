@@ -22,7 +22,7 @@ namespace ft
     typedef ft::vector_iterator<const value_type>            const_iterator;
     typedef ft::reverse_iterator<iterator>                reverse_iterator;
     typedef ft::reverse_iterator<const_iterator>          const_reverse_iterator;
-    typedef ptrdiff_t                                     difference_type;
+    typedef std::ptrdiff_t                                     difference_type;
 
   private:
     allocator_type      _alloc;
@@ -110,7 +110,7 @@ namespace ft
       if (n > _capacity)
         reserve(n);
       for (size_type i = 0; i < n; i++)
-        _alloc.construct(_begin + i, *first++);
+        _alloc.construct(_begin + i, *(first++));
       for (size_type i = n; i < _end; i++)
         _alloc.destroy(_begin + i);
       _end = n;

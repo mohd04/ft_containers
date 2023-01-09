@@ -4,3 +4,7 @@ a.out
 mapp
 tester/
 containers_test
+objs/
+ft_map
+ft_stack
+ft_vec

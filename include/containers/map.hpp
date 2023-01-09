@@ -2,9 +2,9 @@
 # define MAPP_HPP
 
 # include <iostream>
-#include <typeinfo>
 # include "../utilities/util.hpp"
 # include "../utilities/map_iterator.hpp"
+# include "vector.hpp"
 
 # define LH +1   // Left High
 # define EH 0    // Even High
@@ -164,7 +164,23 @@ namespace ft
     }
 
     size_type max_size() const {
-      return (_alloc.max_size() / 2);
+      return _alloc.max_size();
+    }
+
+    T& at(const key_type& k) {
+      iterator it = find(k);
+      if (it == end()) {
+        throw std::out_of_range("map::at");
+      }
+      return it->second;
+    }
+
+    const T& at(const key_type& k) const {
+      const_iterator it = find(k);
+      if (it == end()) {
+        throw std::out_of_range("map::at");
+      }
+      return it->second;
     }
 
     T& operator[] (const key_type& k) {
@@ -214,9 +230,15 @@ namespace ft
     }
 
     void erase(iterator first, iterator last) {
-      while (first != last) {
-        erase(first);
-        first++;
+      ft::vector<key_type> v1;
+      while (first != last)
+      {
+          v1.push_back((*first).first);
+          first++;
+      }
+      for (typename ft::vector<key_type>::iterator it = v1.begin(); it != v1.end(); it++)
+      {
+          erase(*it);
       }
     }
 
@@ -374,6 +396,8 @@ namespace ft
       }
 
       node_pointer    _balance(node_pointer node, const key_type& val) {
+        if (node == NULL) return node;
+
         int bal = height(node->left) - height(node->right);
 
         if (bal > LH && _comp(val, node->left->data.first))
